@@ -1,0 +1,18 @@
+{
+    "tabs": [
+        "Choice_orangebutton.png",
+        "Choice_greenbutton.png",
+        "Choice_redbutton.png",
+        "Choice_bluebutton.png",
+        "Choice_otherbutton.png",
+        "Choice_wallbutton.png"
+    ],
+    "tabs_on": [
+        "Choice_orangebuttonon.png",
+        "Choice_greenbuttonon.png",
+        "Choice_redbuttonon.png",
+        "Choice_bluebuttonon.png",
+        "Choice_otherbuttonon.png",
+        "Choice_wallbuttonon.png"
+    ]
+}

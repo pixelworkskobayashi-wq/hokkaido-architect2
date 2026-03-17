@@ -1,0 +1,209 @@
+{
+	"textures": [
+		{
+			"image": "title_ui.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 2048,
+				"h": 2048
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "Licensedialog_text_01.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 1500,
+						"h": 600
+					},
+					"spriteSourceSize": {
+						"x": 36,
+						"y": 19,
+						"w": 1428,
+						"h": 568
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 1428,
+						"h": 568
+					}
+				},
+				{
+					"filename": "Licensedialog_buttonA.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 360,
+						"h": 90
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 0,
+						"w": 354,
+						"h": 90
+					},
+					"frame": {
+						"x": 1433,
+						"y": 1,
+						"w": 354,
+						"h": 90
+					}
+				},
+				{
+					"filename": "Licensedialog_buttonC-1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 90
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 80,
+						"h": 90
+					},
+					"frame": {
+						"x": 1791,
+						"y": 1,
+						"w": 80,
+						"h": 90
+					}
+				},
+				{
+					"filename": "Licensedialog_buttonB.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 350,
+						"h": 90
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 350,
+						"h": 90
+					},
+					"frame": {
+						"x": 1433,
+						"y": 95,
+						"w": 350,
+						"h": 90
+					}
+				},
+				{
+					"filename": "Licensedialog_buttonC.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 350,
+						"h": 90
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 350,
+						"h": 90
+					},
+					"frame": {
+						"x": 1433,
+						"y": 189,
+						"w": 350,
+						"h": 90
+					}
+				},
+				{
+					"filename": "Licensedialog_text_2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 1500,
+						"h": 600
+					},
+					"spriteSourceSize": {
+						"x": 51,
+						"y": 19,
+						"w": 1398,
+						"h": 363
+					},
+					"frame": {
+						"x": 1,
+						"y": 573,
+						"w": 1398,
+						"h": 363
+					}
+				},
+				{
+					"filename": "Title_start.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 630,
+						"h": 50
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 630,
+						"h": 50
+					},
+					"frame": {
+						"x": 1403,
+						"y": 573,
+						"w": 630,
+						"h": 50
+					}
+				},
+				{
+					"filename": "Licensedialog_textB.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 1500,
+						"h": 600
+					},
+					"spriteSourceSize": {
+						"x": 138,
+						"y": 19,
+						"w": 1224,
+						"h": 468
+					},
+					"frame": {
+						"x": 1,
+						"y": 940,
+						"w": 1224,
+						"h": 468
+					}
+				},
+				{
+					"filename": "Title_text.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 792,
+						"h": 294
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 792,
+						"h": 294
+					},
+					"frame": {
+						"x": 1229,
+						"y": 940,
+						"w": 792,
+						"h": 294
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:337de3810246f71b1001ef8be04fa6c6:26849fe4b4a77a816ce5a87fa68f210f:e925b01b05780ddd299191014d777e4f$"
+	}
+}

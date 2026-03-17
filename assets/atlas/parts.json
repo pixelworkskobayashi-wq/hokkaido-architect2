@@ -1,0 +1,480 @@
+{
+    "tabs": {
+        "Orange": 0,
+        "Garden": 1,
+        "Red": 2,
+        "Blue": 3,
+        "Etc": 4,
+        "Wall": 5
+    },
+    "parts": [
+        {
+            "filename": "Livingroom.png",
+            "text": "Livingroom_text.png",
+            "tabs": 0,
+            "wall_add": 1
+        },
+        {
+            "filename": "Livingroom4×3",
+            "text": "Livingroom200x150_text.png",
+            "tabs": 0,
+            "wall_add": 1
+        },
+        {
+            "filename": "Livingroom5×2",
+            "text": "Livingroom200x150_text.png",
+            "tabs": 0,
+            "wall_add": 1
+        },
+        {
+            "filename": "Livingroom2×1",
+            "text": "Livingroom100x50_text.png",
+            "tabs": 0,
+            "wall_add": 1
+        },
+        {
+            "filename": "Pine.png",
+            "text": "Pine_big_text.png",
+            "tabs": 0,
+            "wall_add": 1
+        },
+        {
+            "filename": "Pine_medium.png",
+            "text": "Pine_medium_text.png",
+            "tabs": 0,
+            "wall_add": 1
+        },
+        {
+            "filename": "Pine_small.png",
+            "text": "Pine_small_text.png",
+            "tabs": 0,
+            "wall_add": 1
+        },
+        {
+            "filename": "Herringbone.png",
+            "text": "Herringbone_big_text.png",
+            "tabs": 0,
+            "wall_add": 1
+        },
+        {
+            "filename": "Herringbone_medium.png",
+            "text": "Herringbone_medium_text.png",
+            "tabs": 0,
+            "wall_add": 1
+        },
+        {
+            "filename": "Herringbone_small.png",
+            "text": "Herringbone_small_text.png",
+            "tabs": 0,
+            "wall_add": 1
+        },
+        {
+            "filename": "Entrance.png",
+            "text": "Entrance_text.png",
+            "tabs": 0,
+            "wall_add": 1
+        },
+        {
+            "filename": "Garden.png",
+            "text": "Garden_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "Cafeteria_A.png",
+            "text": "Cafeteria1_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "Cafeteria_B.png",
+            "text": "Cafeteria2_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "Sofa_A.png",
+            "text": "Sofa1_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "Sofa_B.png",
+            "text": "Sofa2_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "TVstand_A.png",
+            "text": "TVstand1_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "TVstand_B.png",
+            "text": "TVstand2_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "Field1.png",
+            "text": "Field1_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "Field2.png",
+            "text": "Field2_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "Field3.png",
+            "text": "Field3_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "Field4.png",
+            "text": "Field4_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "Flower1.png",
+            "text": "Flower1_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "Flower2.png",
+            "text": "Flower2_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "Flower3.png",
+            "text": "Flower3_text.png",
+            "tabs": 0,
+            "wall_add": 0
+        },
+        {
+            "filename": "Japanese_styleroom.png",
+            "text": "Japanese_styleroom_text.png",
+            "tabs": 1,
+            "wall_add": 1
+        },
+        {
+            "filename": "Japanese_styleroom_small.png",
+            "text": "Japanese_styleroom_small_text.png",
+            "tabs": 1,
+            "wall_add": 1
+        },
+        {
+            "filename": "Japanese_styleroomhalf_.png",
+            "text": "Japanese_styleroomhalf_text.png",
+            "tabs": 1,
+            "wall_add": 1
+        },
+        {
+            "filename": "Japanese_styleroomhalf_small.png",
+            "text": "Japanese_styleroomhalf_small_text.png",
+            "tabs": 1,
+            "wall_add": 1
+        },
+        {
+            "filename": "Western_styleroom.png",
+            "text": "Western_styleroom_text.png",
+            "tabs": 1,
+            "wall_add": 1
+        },
+        {
+            "filename": "Western_styleroom2×2",
+            "text": "Western_styleroom100x100_text.png",
+            "tabs": 1,
+            "wall_add": 1
+        },
+        {
+            "filename": "Bed.png",
+            "text": "Bed_text.png",
+            "tabs": 1,
+            "wall_add": 0
+        },
+        {
+            "filename": "futon_A.png",
+            "text": "futon_150x50text.png",
+            "tabs": 1,
+            "wall_add": 0
+        },
+        {
+            "filename": "futon_B.png",
+            "text": "futon_100x50text.png",
+            "tabs": 1,
+            "wall_add": 0
+        },
+        {
+            "filename": "Kitchen_type_L.png",
+            "text": "KitchenI_text.png",
+            "tabs": 2,
+            "wall_add": 1
+        },
+        {
+            "filename": "Kitchen_type_I.png",
+            "text": "KitchenL_text.png",
+            "tabs": 2,
+            "wall_add": 1
+        },
+        {
+            "filename": "Refrigerator.png",
+            "text": "Refrigerator_text.png",
+            "tabs": 2,
+            "wall_add": 0
+        },
+        {
+            "filename": "Watertiles_pink.png",
+            "text": "Watertiles_pink_text.png",
+            "tabs": 3,
+            "wall_add": 1
+        },
+        {
+            "filename": "Watertiles_blue.png",
+            "text": "Watertiles_blue_text.png",
+            "tabs": 3,
+            "wall_add": 1
+        },
+        {
+            "filename": "Toilet.png",
+            "text": "Toilet_text.png",
+            "tabs": 3,
+            "wall_add": 1
+        },
+        {
+            "filename": "Bathtub.png",
+            "text": "Bathtub_text.png",
+            "tabs": 3,
+            "wall_add": 1
+        },
+        {
+            "filename": "Wash_basin.png",
+            "text": "Wash_basin_text.png",
+            "tabs": 3,
+            "wall_add": 0
+        },
+        {
+            "filename": "Washing_machine.png",
+            "text": "Washing_machine_text.png",
+            "tabs": 3,
+            "wall_add": 0
+        },
+        {
+            "filename": "Corridor.png",
+            "text": "Corridor_text.png",
+            "tabs": 4,
+            "wall_add": 1
+        },
+        {
+            "filename": "Corridor2×1",
+            "text": "Corridor_200x100text.png",
+            "tabs": 4,
+            "wall_add": 1
+        },
+        {
+            "filename": "Corridor1×1",
+            "text": "Corridor_200x100text.png",
+            "tabs": 4,
+            "wall_add": 1
+        },
+        {
+            "filename": "Parking_Lot.png",
+            "text": "Parking_Lot_text.png",
+            "tabs": 4,
+            "wall_add": 1
+        },
+        {
+            "filename": "Approach_big.png",
+            "text": "Approach_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Approach.png",
+            "text": "Approach_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Car.png",
+            "text": "Car_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Storage.png",
+            "text": "Strage1_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Strage1.png",
+            "text": "Strage2_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Strage2.png",
+            "text": "Strage3_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Strage3.png",
+            "text": "Strage4_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Strage4.png",
+            "text": "Strage5_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Kitchenstorage.png",
+            "text": "Kitchenstorage_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "shoerack.png",
+            "text": "Shoerack_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Bookshelf.png",
+            "text": "Bookshelf_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Planting_CRound_01.png",
+            "text": "Planting_CRound_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Planting_CRound__02_A.png",
+            "text": "Planting_CRound_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Planting_CRound_02_B.png",
+            "text": "Planting_CRound_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "human_01_A.png",
+            "text": "Adult_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "human_01_B.png",
+            "text": "Adult_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "human_02_A.png",
+            "text": "Child_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "human_02_B.png",
+            "text": "Child_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "human_03_A.png",
+            "text": "Oldman_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "human_03_B.png",
+            "text": "Grandmother_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "dog.png",
+            "text": "Dog_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "cat.png",
+            "text": "Cat_text.png",
+            "tabs": 4,
+            "wall_add": 0
+        },
+        {
+            "filename": "Eraser.png",
+            "text": "Walleraser_text.png",
+            "tabs": 5,
+            "wall_add": 0,
+            "center_x": 0.5,
+            "center_y": 0,
+            "parent_angle": 0
+        },
+        {
+            "filename": "Wall.png",
+            "text": "Wall_text.png",
+            "tabs": 5,
+            "wall_add": 0,
+            "center_x": 0.5,
+            "center_y": 0.5,
+            "parent_angle": 0
+        },
+        {
+            "filename": "Window.png",
+            "text": "Window_text.png",
+            "tabs": 5,
+            "wall_add": 0,
+            "center_x": 0.5,
+            "center_y": 0.5,
+            "parent_angle": 0
+        },
+        {
+            "filename": "Outside_door.png",
+            "text": "Outside_door.text.png",
+            "tabs": 5,
+            "wall_add": 0,
+            "center_x": 0.5,
+            "center_y": 0.15,
+            "parent_angle": 180
+        },
+        {
+            "filename": "Inside_door.png",
+            "text": "Inside_door.text.png",
+            "tabs": 5,
+            "wall_add": 0,
+            "center_x": 0.5,
+            "center_y": 0.15,
+            "parent_angle": 0
+        },
+        {
+            "filename": "Foldingdoor.png",
+            "text": "Folding_door_text.png",
+            "tabs": 5,
+            "wall_add": 0,
+            "center_x": 0.5,
+            "center_y": 0.4,
+            "parent_angle": 180
+        }
+    ]
+}

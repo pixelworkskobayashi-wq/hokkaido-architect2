@@ -1,0 +1,63 @@
+{
+    "stage": [
+        {
+            "name": "住たく",
+            "img": "Environment_imageA.png",
+            "text": "Overview_text_A.png",
+            "parts": [
+                {
+                    "parts_img": "Site_T.png",
+                    "x": 1104,
+                    "y": 187
+                },
+                {
+                    "parts_img": "Site_B.png",
+                    "x": 1104,
+                    "y": 1001
+                },
+                {
+                    "parts_img": "Site_R.png",
+                    "x": 1710,
+                    "y": 594
+                },
+                {
+                    "parts_img": "Site_L.png",
+                    "x": 498,
+                    "y": 594
+                }
+            ]
+        },
+        {
+            "name": "こう外",
+            "img": "Environment_imageB.png",
+            "text": "Overview_text_B.png",
+            "parts": [
+                {
+                    "parts_img": "Deformed_site_T.png",
+                    "x": 1104,
+                    "y": 187
+                },
+                {
+                    "parts_img": "Deformed_site_B.png",
+                    "x": 1104,
+                    "y": 1001
+                },
+                {
+                    "parts_img": "Deformed_site_R.png",
+                    "x": 1710,
+                    "y": 594
+                },
+                {
+                    "parts_img": "Deformed_site_L.png",
+                    "x": 498,
+                    "y": 594
+                },
+                {
+                    "parts_img": "Deformed_site_M.png",
+                    "x": 1510,
+                    "y": 391
+                }
+            ]
+        }
+    ]
+}

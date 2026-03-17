@@ -1,0 +1,1687 @@
+{
+	"textures": [
+		{
+			"image": "parts_image.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 1024,
+				"h": 2048
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "Livingroom.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 464,
+						"h": 232
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 464,
+						"h": 232
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 464,
+						"h": 232
+					}
+				},
+				{
+					"filename": "Livingroom4×3",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 232,
+						"h": 174
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 232,
+						"h": 174
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 232,
+						"h": 174
+					}
+				},
+				{
+					"filename": "Livingroom5×2",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 290,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 290,
+						"h": 116
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 290,
+						"h": 116
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "Livingroom2×1",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 58
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 116,
+						"h": 58
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "Parking_Lot.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 348,
+						"h": 174
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 348,
+						"h": 174
+					},
+					"frame": {
+						"x": 469,
+						"y": 1,
+						"w": 348,
+						"h": 174
+					}
+				},
+				{
+					"filename": "Japanese_styleroomhalf_.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 174,
+						"h": 232
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 174,
+						"h": 232
+					},
+					"frame": {
+						"x": 821,
+						"y": 1,
+						"w": 174,
+						"h": 232
+					}
+				},
+				{
+					"filename": "Western_styleroom.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 290,
+						"h": 174
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 290,
+						"h": 174
+					},
+					"frame": {
+						"x": 469,
+						"y": 179,
+						"w": 290,
+						"h": 174
+					}
+				},
+				{
+					"filename": "Western_styleroom2×2",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 116
+					},
+					"frame": {
+						"x": 469,
+						"y": 179,
+						"w": 116,
+						"h": 116
+					}
+				},
+				{
+					"filename": "Flower3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 0,
+						"w": 53,
+						"h": 56
+					},
+					"frame": {
+						"x": 763,
+						"y": 179,
+						"w": 53,
+						"h": 56
+					}
+				},
+				{
+					"filename": "Car.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 290,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 25,
+						"y": 0,
+						"w": 247,
+						"h": 116
+					},
+					"frame": {
+						"x": 763,
+						"y": 239,
+						"w": 247,
+						"h": 116
+					}
+				},
+				{
+					"filename": "Garden.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 290,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 290,
+						"h": 116
+					},
+					"frame": {
+						"x": 1,
+						"y": 237,
+						"w": 290,
+						"h": 116
+					}
+				},
+				{
+					"filename": "Storage.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 174,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 0,
+						"w": 170,
+						"h": 58
+					},
+					"frame": {
+						"x": 295,
+						"y": 237,
+						"w": 170,
+						"h": 58
+					}
+				},
+				{
+					"filename": "TVstand_A.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 174,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 0,
+						"w": 170,
+						"h": 58
+					},
+					"frame": {
+						"x": 295,
+						"y": 299,
+						"w": 170,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Bathroom.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 232,
+						"h": 232
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 232,
+						"h": 232
+					},
+					"frame": {
+						"x": 1,
+						"y": 357,
+						"w": 232,
+						"h": 232
+					}
+				},
+				{
+					"filename": "Flower2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 4,
+						"w": 53,
+						"h": 51
+					},
+					"frame": {
+						"x": 237,
+						"y": 357,
+						"w": 53,
+						"h": 51
+					}
+				},
+				{
+					"filename": "Herringbone.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 232,
+						"h": 232
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 232,
+						"h": 232
+					},
+					"frame": {
+						"x": 469,
+						"y": 357,
+						"w": 232,
+						"h": 232
+					}
+				},
+				{
+					"filename": "TVstand_B.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 174,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 0,
+						"w": 170,
+						"h": 58
+					},
+					"frame": {
+						"x": 294,
+						"y": 361,
+						"w": 170,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Flower1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 4,
+						"w": 53,
+						"h": 51
+					},
+					"frame": {
+						"x": 237,
+						"y": 412,
+						"w": 53,
+						"h": 51
+					}
+				},
+				{
+					"filename": "cat.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 3,
+						"w": 53,
+						"h": 49
+					},
+					"frame": {
+						"x": 705,
+						"y": 357,
+						"w": 53,
+						"h": 49
+					}
+				},
+				{
+					"filename": "Cafeteria_B.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 174,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 0,
+						"w": 146,
+						"h": 116
+					},
+					"frame": {
+						"x": 294,
+						"y": 423,
+						"w": 146,
+						"h": 116
+					}
+				},
+				{
+					"filename": "human_02_A.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 30,
+						"w": 51,
+						"h": 65
+					},
+					"frame": {
+						"x": 237,
+						"y": 467,
+						"w": 51,
+						"h": 65
+					}
+				},
+				{
+					"filename": "human_02_B.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 35,
+						"w": 49,
+						"h": 61
+					},
+					"frame": {
+						"x": 237,
+						"y": 536,
+						"w": 49,
+						"h": 61
+					}
+				},
+				{
+					"filename": "Japanese_styleroom.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 232,
+						"h": 232
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 232,
+						"h": 232
+					},
+					"frame": {
+						"x": 1,
+						"y": 593,
+						"w": 232,
+						"h": 232
+					}
+				},
+				{
+					"filename": "Japanese_styleroomhalf_small.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 174,
+						"h": 174
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 174,
+						"h": 174
+					},
+					"frame": {
+						"x": 290,
+						"y": 543,
+						"w": 174,
+						"h": 174
+					}
+				},
+				{
+					"filename": "dog.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 1,
+						"w": 48,
+						"h": 57
+					},
+					"frame": {
+						"x": 237,
+						"y": 601,
+						"w": 48,
+						"h": 57
+					}
+				},
+				{
+					"filename": "human_01_A.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 47,
+						"h": 109
+					},
+					"frame": {
+						"x": 237,
+						"y": 662,
+						"w": 47,
+						"h": 109
+					}
+				},
+				{
+					"filename": "Pine.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 232,
+						"h": 232
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 232,
+						"h": 232
+					},
+					"frame": {
+						"x": 762,
+						"y": 359,
+						"w": 232,
+						"h": 232
+					}
+				},
+				{
+					"filename": "human_03_A.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 5,
+						"w": 31,
+						"h": 110
+					},
+					"frame": {
+						"x": 705,
+						"y": 410,
+						"w": 31,
+						"h": 110
+					}
+				},
+				{
+					"filename": "human_03_B.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 14,
+						"w": 31,
+						"h": 95
+					},
+					"frame": {
+						"x": 705,
+						"y": 524,
+						"w": 31,
+						"h": 95
+					}
+				},
+				{
+					"filename": "Japanese_styleroom_small.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 232,
+						"h": 174
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 232,
+						"h": 174
+					},
+					"frame": {
+						"x": 468,
+						"y": 593,
+						"w": 232,
+						"h": 174
+					}
+				},
+				{
+					"filename": "Corridor.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 174,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 174,
+						"h": 116
+					},
+					"frame": {
+						"x": 288,
+						"y": 721,
+						"w": 174,
+						"h": 116
+					}
+				},
+				{
+					"filename": "Corridor2×1",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 58
+					},
+					"frame": {
+						"x": 288,
+						"y": 721,
+						"w": 116,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Corridor1×1",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 288,
+						"y": 721,
+						"w": 58,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Field.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 232,
+						"h": 174
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 232,
+						"h": 169
+					},
+					"frame": {
+						"x": 1,
+						"y": 829,
+						"w": 232,
+						"h": 169
+					}
+				},
+				{
+					"filename": "Approach_big.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 232,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 232,
+						"h": 116
+					},
+					"frame": {
+						"x": 740,
+						"y": 595,
+						"w": 232,
+						"h": 116
+					}
+				},
+				{
+					"filename": "Herringbone_medium.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 232,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 232,
+						"h": 116
+					},
+					"frame": {
+						"x": 704,
+						"y": 715,
+						"w": 232,
+						"h": 116
+					}
+				},
+				{
+					"filename": "Pine_medium.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 232,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 232,
+						"h": 116
+					},
+					"frame": {
+						"x": 466,
+						"y": 771,
+						"w": 232,
+						"h": 116
+					}
+				},
+				{
+					"filename": "futon_B.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 20,
+						"y": 0,
+						"w": 75,
+						"h": 58
+					},
+					"frame": {
+						"x": 940,
+						"y": 715,
+						"w": 75,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Door.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 68,
+						"h": 54
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 68,
+						"h": 54
+					},
+					"frame": {
+						"x": 940,
+						"y": 777,
+						"w": 68,
+						"h": 54
+					}
+				},
+				{
+					"filename": "Entrance.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 174,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 174,
+						"h": 116
+					},
+					"frame": {
+						"x": 237,
+						"y": 841,
+						"w": 174,
+						"h": 116
+					}
+				},
+				{
+					"filename": "Kitchen_type_L.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 174,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 174,
+						"h": 116
+					},
+					"frame": {
+						"x": 702,
+						"y": 835,
+						"w": 174,
+						"h": 116
+					}
+				},
+				{
+					"filename": "veranda.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 174
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 174
+					},
+					"frame": {
+						"x": 880,
+						"y": 835,
+						"w": 116,
+						"h": 174
+					}
+				},
+				{
+					"filename": "Sofa_B.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 174,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 174,
+						"h": 116
+					},
+					"frame": {
+						"x": 415,
+						"y": 891,
+						"w": 174,
+						"h": 116
+					}
+				},
+				{
+					"filename": "Approach.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 174,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 174,
+						"h": 58
+					},
+					"frame": {
+						"x": 237,
+						"y": 961,
+						"w": 174,
+						"h": 58
+					}
+				},
+				{
+					"filename": "futon_A.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 0,
+						"w": 105,
+						"h": 58
+					},
+					"frame": {
+						"x": 593,
+						"y": 891,
+						"w": 105,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Inside_door.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 64,
+						"h": 57
+					},
+					"frame": {
+						"x": 593,
+						"y": 953,
+						"w": 64,
+						"h": 57
+					}
+				},
+				{
+					"filename": "Kitchen_type_I.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 174,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 173,
+						"h": 116
+					},
+					"frame": {
+						"x": 415,
+						"y": 1011,
+						"w": 173,
+						"h": 116
+					}
+				},
+				{
+					"filename": "Bathtub.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 116
+					},
+					"frame": {
+						"x": 661,
+						"y": 955,
+						"w": 116,
+						"h": 116
+					}
+				},
+				{
+					"filename": "Outside_door.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 64,
+						"h": 57
+					},
+					"frame": {
+						"x": 592,
+						"y": 1014,
+						"w": 64,
+						"h": 57
+					}
+				},
+				{
+					"filename": "Foldingdoor.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 25,
+						"w": 64,
+						"h": 23
+					},
+					"frame": {
+						"x": 781,
+						"y": 955,
+						"w": 64,
+						"h": 23
+					}
+				},
+				{
+					"filename": "Window.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 25,
+						"w": 64,
+						"h": 17
+					},
+					"frame": {
+						"x": 781,
+						"y": 982,
+						"w": 64,
+						"h": 17
+					}
+				},
+				{
+					"filename": "Wall.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 26,
+						"w": 64,
+						"h": 15
+					},
+					"frame": {
+						"x": 781,
+						"y": 1003,
+						"w": 64,
+						"h": 15
+					}
+				},
+				{
+					"filename": "Cafeteria_A.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 116
+					},
+					"frame": {
+						"x": 849,
+						"y": 1013,
+						"w": 116,
+						"h": 116
+					}
+				},
+				{
+					"filename": "human_01_B.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 4,
+						"w": 58,
+						"h": 105
+					},
+					"frame": {
+						"x": 781,
+						"y": 1022,
+						"w": 58,
+						"h": 105
+					}
+				},
+				{
+					"filename": "Watertiles_blue.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 116
+					},
+					"frame": {
+						"x": 592,
+						"y": 1075,
+						"w": 116,
+						"h": 116
+					}
+				},
+				{
+					"filename": "Bookshelf.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 712,
+						"y": 1075,
+						"w": 58,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Eraser.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 774,
+						"y": 1131,
+						"w": 58,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Planting_CRound_01.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 712,
+						"y": 1137,
+						"w": 58,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Watertiles_pink.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 116
+					},
+					"frame": {
+						"x": 836,
+						"y": 1133,
+						"w": 116,
+						"h": 116
+					}
+				},
+				{
+					"filename": "Refrigerator.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 774,
+						"y": 1193,
+						"w": 58,
+						"h": 58
+					}
+				},
+				{
+					"filename": "shoerack.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 956,
+						"y": 1133,
+						"w": 58,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Planting_CRound_02_B.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 2,
+						"w": 58,
+						"h": 56
+					},
+					"frame": {
+						"x": 956,
+						"y": 1195,
+						"w": 58,
+						"h": 56
+					}
+				},
+				{
+					"filename": "Sofa_A.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 116,
+						"h": 116
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 9,
+						"w": 116,
+						"h": 95
+					},
+					"frame": {
+						"x": 836,
+						"y": 1253,
+						"w": 116,
+						"h": 95
+					}
+				},
+				{
+					"filename": "Planting_CRound__02_A.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 2,
+						"w": 58,
+						"h": 56
+					},
+					"frame": {
+						"x": 956,
+						"y": 1255,
+						"w": 58,
+						"h": 56
+					}
+				},
+				{
+					"filename": "Washing_machine.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 57,
+						"h": 57
+					},
+					"frame": {
+						"x": 956,
+						"y": 1315,
+						"w": 57,
+						"h": 57
+					}
+				},
+				{
+					"filename": "Field1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 58
+					},
+					"frame": {
+						"x": 1,
+						"y": 1002,
+						"w": 116,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Strage3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 0,
+						"w": 112,
+						"h": 58
+					},
+					"frame": {
+						"x": 121,
+						"y": 1002,
+						"w": 112,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Field2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 58
+					},
+					"frame": {
+						"x": 237,
+						"y": 1023,
+						"w": 116,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Field3.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 58
+					},
+					"frame": {
+						"x": 1,
+						"y": 1064,
+						"w": 116,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Bed.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 0,
+						"w": 111,
+						"h": 58
+					},
+					"frame": {
+						"x": 121,
+						"y": 1064,
+						"w": 111,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Field4.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 58
+					},
+					"frame": {
+						"x": 236,
+						"y": 1085,
+						"w": 116,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Herringbone_small.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 58
+					},
+					"frame": {
+						"x": 1,
+						"y": 1126,
+						"w": 116,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Toilet.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 0,
+						"w": 110,
+						"h": 58
+					},
+					"frame": {
+						"x": 121,
+						"y": 1126,
+						"w": 110,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Pine_small.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 116,
+						"h": 58
+					},
+					"frame": {
+						"x": 356,
+						"y": 1131,
+						"w": 116,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Strage1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 114,
+						"h": 58
+					},
+					"frame": {
+						"x": 235,
+						"y": 1147,
+						"w": 114,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Wash_basin.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 0,
+						"w": 108,
+						"h": 58
+					},
+					"frame": {
+						"x": 476,
+						"y": 1131,
+						"w": 108,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Strage2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 114,
+						"h": 58
+					},
+					"frame": {
+						"x": 1,
+						"y": 1188,
+						"w": 114,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Strage4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 114,
+						"h": 58
+					},
+					"frame": {
+						"x": 353,
+						"y": 1193,
+						"w": 114,
+						"h": 58
+					}
+				},
+				{
+					"filename": "Kitchenstorage.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 116,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 0,
+						"w": 113,
+						"h": 58
+					},
+					"frame": {
+						"x": 471,
+						"y": 1193,
+						"w": 113,
+						"h": 58
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:255b605174c26d35751debb700b0f6d7:98d686c20fb92bdfa4683a612f0b6dcb:e3054ec666b3400fc055b51a68cdc1a8$"
+	}
+}

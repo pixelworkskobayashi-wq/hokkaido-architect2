@@ -1,0 +1,16 @@
+{
+    "License": [
+        {
+            "key": "mitA",
+            "url": "./assets/title/MIT_kariA.png"
+        },
+        {
+            "key": "mitB",
+            "url": "./assets/title/MIT_kariB.png"
+        },
+        {
+            "key": "mitC",
+            "url": "./assets/title/MIT_kariC.png"
+        }
+    ]
+}

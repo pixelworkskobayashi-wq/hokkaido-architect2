@@ -1,0 +1,39 @@
+{
+    "comment": {
+        "name": "入力する項目の名称",
+        "text": "初期入力されている文字",
+        "size": "入力出来る文字数"
+    },
+    "input_type": [
+        {
+            "name": "Date.png",
+            "text": "",
+            "size": 7
+        },
+        {
+            "name": "Constructionname.png",
+            "text": "",
+            "size": 11
+        },
+        {
+            "name": "Drawingname.png",
+            "text": "平面図",
+            "size": 3.5
+        },
+        {
+            "name": "primaryschool.png",
+            "text": "",
+            "size": 10
+        },
+        {
+            "name": "Yeargroup.png",
+            "text": "",
+            "size": 4.5
+        },
+        {
+            "name": "Name.png",
+            "text": "",
+            "size": 9
+        }
+    ]
+}
