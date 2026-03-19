@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html rang="ja">
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="googlebot" content="noindex">
+
+<head>
+    <title>パズルで住まいを考えよう！</title>
+    <style>
+        html,
+        body {
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        /* ===== 利用規約オーバーレイ ===== */
+        #tos-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            /* クリック・タッチをすべてオーバーレイで受け止める */
+            pointer-events: all;
+        }
+
+        #tos-box {
+            background: #fff;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        #tos-header {
+            background: #2d6a3f;
+            color: #fff;
+            padding: 18px 24px;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        #tos-body {
+            padding: 20px 24px;
+            overflow-y: auto;
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        #tos-body h3 {
+            font-size: 15px;
+            color: #2d6a3f;
+            margin: 16px 0 6px;
+            border-left: 4px solid #2d6a3f;
+            padding-left: 8px;
+        }
+
+        #tos-body p { margin: 0 0 10px; }
+
+        #tos-body ol {
+            margin: 6px 0 10px 20px;
+            padding: 0;
+        }
+
+        #tos-body ol li { margin-bottom: 4px; }
+
+        #tos-intro {
+            background: #f5f9f6;
+            border: 1px solid #c8e6c9;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #444;
+        }
+
+        #tos-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e0e0e0;
+            background: #fafafa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        #tos-agree-btn {
+            background: #2d6a3f;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 60px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            letter-spacing: 1px;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 3px 10px rgba(45,106,63,0.3);
+        }
+
+        #tos-agree-btn:hover { background: #1e5030; }
+        #tos-agree-btn:active { transform: scale(0.97); }
+
+        #tos-body::-webkit-scrollbar { width: 6px; }
+        #tos-body::-webkit-scrollbar-track { background: #f0f0f0; }
+        #tos-body::-webkit-scrollbar-thumb { background: #a5d6a7; border-radius: 3px; }
+    </style>
+    <script src="phaser.min.js"></script>
+    <script src="./dist/bundle.js"></script>
+</head>
+
+<body>
+
+    <!-- 利用規約オーバーレイ -->
+    <div id="tos-overlay">
+        <div id="tos-box">
+            <div id="tos-header">📋 利用規約</div>
+            <div id="tos-body">
+                <div id="tos-intro">
+                    本アプリをご利用いただく前に、以下の利用規約（以下「本規約」といいます）をよくお読みください。利用者は、本規約に同意した上で本アプリを利用するものとします。
+                </div>
+
+                <h3>第1条（目的）</h3>
+                <p>本アプリは、青少年の健全な教育および住まいに関する理解を深め、賢い消費者としての知識を育むことを目的とした教育支援ツールです。</p>
+
+                <h3>第2条（著作権および権利帰属）</h3>
+                <p>本アプリおよび本アプリ内で提供されるプログラム、デザイン、文章、画像、間取り作成機能および生成物に関する著作権その他一切の権利は、一般社団法人北海道建築士会（以下「甲」といいます）に帰属します。</p>
+
+                <h3>第3条（利用許諾）</h3>
+                <p>甲は、利用者に対し、本アプリを非営利かつ教育目的の範囲内で利用する非独占的な権利を許諾します。</p>
+
+                <h3>第4条（禁止事項）</h3>
+                <p>利用者は、以下の行為を行ってはなりません。</p>
+                <ol>
+                    <li>甲の許可なく、本アプリまたはその内容を第三者に提供、公開、配布する行為</li>
+                    <li>甲の許可なく、本アプリを営利目的で利用する行為</li>
+                    <li>本アプリの全部または一部を改変、複製、再配布する行為</li>
+                    <li>本アプリを利用して第三者の権利を侵害する行為</li>
+                    <li>法令または公序良俗に反する行為</li>
+                    <li>その他、甲が不適切と判断する行為</li>
+                </ol>
+
+                <h3>第5条（免責事項）</h3>
+                <ol>
+                    <li>本アプリの利用に関連して利用者または第三者に生じたいかなる損害についても、甲は一切の責任を負いません。</li>
+                    <li>利用者が本アプリを利用して行った行為およびその結果については、すべて利用者の責任とします。</li>
+                    <li>利用者間または利用者と第三者との間で生じた紛争について、甲は一切関与せず責任を負いません。</li>
+                </ol>
+
+                <h3>第6条（規約違反）</h3>
+                <p>利用者が本規約に違反した場合、甲は当該利用者の利用を制限または停止できるものとします。</p>
+
+                <h3>第7条（規約の変更）</h3>
+                <p>甲は、必要に応じて本規約を変更することができるものとします。</p>
+            </div>
+            <div id="tos-footer">
+                <button id="tos-agree-btn" onclick="agreeTos()">同意してはじめる</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game_app"></div>
+
+    <script>
+        var overlay = document.getElementById('tos-overlay');
+
+        // オーバーレイ上のクリック・タッチをすべて止める（背後のPhaserに届かないようにする）
+        overlay.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        overlay.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+        });
+        overlay.addEventListener('mouseup', function(e) {
+            e.stopPropagation();
+        });
+        overlay.addEventListener('touchstart', function(e) {
+            e.stopPropagation();
+        }, { passive: false });
+        overlay.addEventListener('touchend', function(e) {
+            e.stopPropagation();
+        }, { passive: false });
+        overlay.addEventListener('pointerdown', function(e) {
+            e.stopPropagation();
+        });
+        overlay.addEventListener('pointerup', function(e) {
+            e.stopPropagation();
+        });
+
+        function agreeTos() {
+            overlay.style.transition = 'opacity 0.3s';
+            overlay.style.opacity = '0';
+            setTimeout(function() {
+                overlay.style.display = 'none';
+            }, 300);
+        }
+    </script>
+
+
+<script>
+(function(){
+    var MIN_ZOOM=1.0, MAX_ZOOM=2.0;
+    var zm=1.0, txPx=0, tyPx=0;
+    var cv=null;
+    var r0={left:0,top:0}; // canvas初期位置（固定）
+    var w0=0, h0=0;         // canvas初期サイズ（固定）
+    var ready=false;
+
+    var initTimer=setInterval(function(){
+        var c=document.querySelector('#game_app canvas');
+        if(!c) return;
+        cv=c;
+        clearInterval(initTimer);
+        // PhaserのFITモードが確定した後にr0とw0/h0を記録
+        setTimeout(function(){
+            updateR0();
+            ready=true;
+        },800);
+        attachEvents();
+        requestAnimationFrame(updateLoop);
+    },100);
+
+    // PhaserのcanvasBoundsを毎フレーム更新
+    function updateLoop(){
+        requestAnimationFrame(updateLoop);
+        if(!cv||!window._phaserGame||!ready) return;
+        var sc=window._phaserGame.scale;
+        if(!sc) return;
+        // ScaleManagerの自動リフレッシュを抑制
+        sc.resizeInterval=999999999;
+        // canvasのwidth/heightをScaleManagerに上書きされないよう固定
+        if(zm>1.0001&&w0>0){
+            cv.style.width=w0+'px';
+            cv.style.height=h0+'px';
+        }
+        // canvasBoundsをCSS transform後の実際の位置で更新
+        if(!sc.canvasBounds||!sc.displayScale||!sc.baseSize) return;
+        var r=cv.getBoundingClientRect();
+        var cb=sc.canvasBounds;
+        cb.x=r.left+(window.pageXOffset||0);
+        cb.y=r.top+(window.pageYOffset||0);
+        cb.width=r.width; cb.height=r.height;
+        if(r.width>0) sc.displayScale.x=sc.baseSize.width/r.width;
+        if(r.height>0) sc.displayScale.y=sc.baseSize.height/r.height;
+    }
+
+    // CSS transformを適用
+    // transform: translate(txPx, tyPx) scale(zm)
+    // transformOrigin: 0 0
+    function applyTransform(){
+        if(!cv) return;
+        var tfm, origin;
+        if(zm<=1.0001){
+            // zoom=1に戻ったときcanvas位置を再取得
+            cv.style.transform='none';
+            cv.style.transformOrigin='';
+            txPx=0; tyPx=0;
+            var r=cv.getBoundingClientRect();
+            r0.left=r.left; r0.top=r.top;
+            w0=cv.offsetWidth||w0; h0=cv.offsetHeight||h0;
+            tfm='none'; origin='';
+        } else {
+            origin='0 0';
+            tfm='translate('+txPx+'px,'+tyPx+'px) scale('+zm+')';
+        }
+        cv.style.transformOrigin=origin;
+        cv.style.transform=tfm;
+        // PhaserのDOMコンテナにも同じtransformを適用（テキスト入力欄）
+        var doms=document.querySelectorAll('#game_app > div');
+        for(var i=0;i<doms.length;i++){
+            doms[i].style.transformOrigin=origin;
+            doms[i].style.transform=tfm;
+            if(zm>1.0001&&w0>0){
+                doms[i].style.width=w0+'px';
+                doms[i].style.height=h0+'px';
+            } else {
+                doms[i].style.width='';
+                doms[i].style.height='';
+            }
+        }
+    }
+
+    // r0とw0/h0を現在のcanvas位置・サイズで更新
+    // zoom=1のとき（transform解除後）に呼ぶ
+    function updateR0(){
+        if(!cv) return;
+        // zm=1のときのみ呼ぶ想定
+        // transformをnoneにしてcanvasの実際の位置・サイズを計測
+        cv.style.transform='none';
+        cv.style.transformOrigin='';
+        var r=cv.getBoundingClientRect();
+        r0.left=r.left; r0.top=r.top;
+        w0=cv.offsetWidth||w0;
+        h0=cv.offsetHeight||h0;
+        // DOMコンテナもリセット
+        var doms=document.querySelectorAll('#game_app > div');
+        for(var i=0;i<doms.length;i++){
+            doms[i].style.transform='none';
+            doms[i].style.transformOrigin='';
+            doms[i].style.width=''; doms[i].style.height='';
+        }
+    }
+
+    // パン量クランプ
+    // translate(txPx,tyPx)後にscale(zm):
+    // canvas左端のscreen位置 = r0.left + txPx
+    // canvas右端のscreen位置 = r0.left + txPx + w0*zm
+    // 左端制限: txPx <= 0（canvas左端が元位置より右に行かない）
+    // 右端制限: txPx >= w0*(1-zm)（canvas右端が元位置の右端より左に行かない）
+    function clamp(){
+        if(zm<=1.0001){txPx=0;tyPx=0;return;}
+        txPx=Math.max(w0*(1-zm),Math.min(0,txPx));
+        tyPx=Math.max(h0*(1-zm),Math.min(0,tyPx));
+    }
+
+    // カーソル/タッチ位置を中心にズーム
+    // canvas座標: (clientX - r0.left - txPx) / zm
+    function zoomAt(newZm,clientX,clientY){
+        if(!ready) return;
+        newZm=Math.min(MAX_ZOOM,Math.max(MIN_ZOOM,newZm));
+        if(newZm===zm) return;
+        // 現在のカーソルのcanvas座標
+        var cx_canvas=(clientX-r0.left-txPx)/zm;
+        var cy_canvas=(clientY-r0.top-tyPx)/zm;
+        // ズーム後も同じcanvas座標がカーソル位置に来るように
+        txPx=clientX-r0.left-cx_canvas*newZm;
+        tyPx=clientY-r0.top-cy_canvas*newZm;
+        zm=newZm;
+        clamp();
+        applyTransform();
+    }
+
+    function attachEvents(){
+        // ウィンドウリサイズ時: zmに関わらずr0を更新してtransformを再適用
+        window.addEventListener('resize',function(){
+            if(!cv||!ready) return;
+            // transformを解除してPhaserのFITモードが確定するまで待つ
+            cv.style.transform='none';
+            cv.style.transformOrigin='';
+            var doms=document.querySelectorAll('#game_app > div');
+            for(var i=0;i<doms.length;i++){
+                doms[i].style.transform='none';
+                doms[i].style.transformOrigin='';
+                doms[i].style.width=''; doms[i].style.height='';
+            }
+            // FITモード確定後にr0更新とtransform再適用
+            setTimeout(function(){
+                if(!cv) return;
+                var r=cv.getBoundingClientRect();
+                r0.left=r.left; r0.top=r.top;
+                w0=cv.offsetWidth||w0; h0=cv.offsetHeight||h0;
+                // ズーム状態を維持しつつtransformを再適用
+                // パン位置はclampで新しいサイズに合わせて調整
+                clamp();
+                applyTransform();
+            },300);
+        });
+
+        // ホイールズーム（canvas上のみ）
+        window.addEventListener('wheel',function(e){
+            if(!cv||!ready) return;
+            var r=cv.getBoundingClientRect();
+            if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom) return;
+            e.preventDefault();
+            zoomAt(zm+(e.deltaY<0?0.1:-0.1),e.clientX,e.clientY);
+        },{passive:false});
+
+        // 中ボタンドラッグ = パン
+        var pan={on:false,sx:0,sy:0,stx:0,sty:0};
+        window.addEventListener('mousedown',function(e){
+            if(e.button===1&&zm>1.0001&&ready){
+                e.preventDefault();
+                pan.on=true;
+                pan.sx=e.clientX;pan.sy=e.clientY;
+                pan.stx=txPx;pan.sty=tyPx;
+            }
+        },true);
+        window.addEventListener('mouseup',function(e){if(e.button===1)pan.on=false;},true);
+        window.addEventListener('mousemove',function(e){
+            if(!pan.on) return;
+            txPx=pan.stx+(e.clientX-pan.sx);
+            tyPx=pan.sty+(e.clientY-pan.sy);
+            clamp();applyTransform();
+        },true);
+
+        // ピンチズーム + 2本指パン
+        // e.touchesで全タッチを管理（changedTouchesだと一部しか更新されない）
+        var tc={ids:[],prevMx:0,prevMy:0,prevD:0,on:false};
+
+        function getTwoTouches(touches){
+            // tc.idsに登録された2本のタッチを取得
+            var result=[];
+            for(var i=0;i<touches.length;i++){
+                if(tc.ids.indexOf(touches[i].identifier)>=0)
+                    result.push(touches[i]);
+            }
+            return result.length>=2?result.slice(0,2):null;
+        }
+
+        window.addEventListener('touchstart',function(e){
+            if(!cv||!ready) return;
+            // 新しいタッチをids に追加
+            for(var i=0;i<e.changedTouches.length;i++){
+                var id=e.changedTouches[i].identifier;
+                if(tc.ids.indexOf(id)<0) tc.ids.push(id);
+            }
+            if(tc.ids.length>=2){
+                var two=getTwoTouches(e.touches);
+                if(!two) return;
+                var r=cv.getBoundingClientRect();
+                var mx=(two[0].clientX+two[1].clientX)/2;
+                var my=(two[0].clientY+two[1].clientY)/2;
+                if(mx<r.left||mx>r.right||my<r.top||my>r.bottom){
+                    tc.on=false;tc.ids=[];return;
+                }
+                tc.on=true;
+                tc.prevMx=mx; tc.prevMy=my;
+                tc.prevD=Math.hypot(two[1].clientX-two[0].clientX,two[1].clientY-two[0].clientY)||1;
+            }
+        },{passive:true});
+
+        window.addEventListener('touchmove',function(e){
+            if(!tc.on||!cv||!ready) return;
+            var two=getTwoTouches(e.touches);
+            if(!two||two.length<2) return;
+            e.preventDefault();
+
+            var mx=(two[0].clientX+two[1].clientX)/2;
+            var my=(two[0].clientY+two[1].clientY)/2;
+            var nd=Math.hypot(two[1].clientX-two[0].clientX,two[1].clientY-two[0].clientY)||1;
+
+            // ズーム計算（前フレームからの変化量で計算）
+            var nz=Math.min(MAX_ZOOM,Math.max(MIN_ZOOM,zm*nd/tc.prevD));
+
+            if(nz!==zm){
+                // ピンチ中心を固定してズーム
+                var cx_c=(tc.prevMx-r0.left-txPx)/zm;
+                var cy_c=(tc.prevMy-r0.top-tyPx)/zm;
+                txPx=tc.prevMx-r0.left-cx_c*nz;
+                tyPx=tc.prevMy-r0.top-cy_c*nz;
+                zm=nz;
+            }
+
+            // パン計算（中点の移動量）
+            txPx+=(mx-tc.prevMx);
+            tyPx+=(my-tc.prevMy);
+
+            // 今フレームの値を次フレームの基準として保存
+            tc.prevMx=mx; tc.prevMy=my; tc.prevD=nd;
+
+            clamp();applyTransform();
+        },{passive:false});
+
+        window.addEventListener('touchend',function(e){
+            for(var i=0;i<e.changedTouches.length;i++){
+                var id=e.changedTouches[i].identifier;
+                var idx=tc.ids.indexOf(id);
+                if(idx>=0) tc.ids.splice(idx,1);
+            }
+            if(tc.ids.length<2){
+                tc.on=false;
+                // 残った1本指の状態を更新
+                if(e.touches.length>0){
+                    tc.ids=[e.touches[0].identifier];
+                }
+            }
+        },{passive:true});
+    }
+})();
+</script>
+
+</body>
+</html>
