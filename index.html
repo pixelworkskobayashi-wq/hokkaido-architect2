@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html rang="ja">
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="googlebot" content="noindex">
+<head>
+    <title>パズルで住まいを考えよう！</title>
+    <style>
+        html,body{margin:0;padding:0;overflow:hidden;height:100%;}
+        #tos-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN',Meiryo,sans-serif;pointer-events:all;}
+        #tos-box{background:#fff;border-radius:12px;width:90%;max-width:700px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,0.4);overflow:hidden;}
+        #tos-header{background:#2d6a3f;color:#fff;padding:18px 24px;font-size:20px;font-weight:bold;letter-spacing:1px;flex-shrink:0;}
+        #tos-body{padding:20px 24px;overflow-y:auto;flex:1;font-size:14px;line-height:1.8;color:#333;}
+        #tos-body h3{font-size:15px;color:#2d6a3f;margin:16px 0 6px;border-left:4px solid #2d6a3f;padding-left:8px;}
+        #tos-body p{margin:0 0 10px;}
+        #tos-body ol{margin:6px 0 10px 20px;padding:0;}
+        #tos-body ol li{margin-bottom:4px;}
+        #tos-intro{background:#f5f9f6;border:1px solid #c8e6c9;border-radius:6px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#444;}
+        #tos-footer{padding:16px 24px;border-top:1px solid #e0e0e0;background:#fafafa;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        #tos-agree-btn{background:#2d6a3f;color:#fff;border:none;border-radius:8px;padding:14px 60px;font-size:17px;font-weight:bold;cursor:pointer;letter-spacing:1px;transition:background 0.2s,transform 0.1s;box-shadow:0 3px 10px rgba(45,106,63,0.3);}
+        #tos-agree-btn:hover{background:#1e5030;}
+        #tos-agree-btn:active{transform:scale(0.97);}
+        #tos-body::-webkit-scrollbar{width:6px;}
+        #tos-body::-webkit-scrollbar-track{background:#f0f0f0;}
+        #tos-body::-webkit-scrollbar-thumb{background:#a5d6a7;border-radius:3px;}
+    </style>
+    <script src="phaser.min.js"></script>
+    <script src="./dist/bundle.js"></script>
+</head>
+<body>
+<div id="tos-overlay">
+    <div id="tos-box">
+        <div id="tos-header">📋 利用規約</div>
+        <div id="tos-body">
+            <div id="tos-intro">本アプリをご利用いただく前に、以下の利用規約をよくお読みください。</div>
+            <h3>第1条（目的）</h3><p>本アプリは教育支援ツールです。</p>
+            <h3>第2条（著作権および権利帰属）</h3><p>本アプリの権利は一般社団法人北海道建築士会に帰属します。</p>
+            <h3>第3条（利用許諾）</h3><p>非営利・教育目的の範囲内での利用を許諾します。</p>
+            <h3>第4条（禁止事項）</h3>
+            <ol><li>許可なく第三者への提供・公開・配布</li><li>許可なく営利目的での利用</li><li>本アプリの改変・複製・再配布</li><li>第三者の権利を侵害する行為</li><li>法令または公序良俗に反する行為</li></ol>
+            <h3>第5条（免責事項）</h3><p>本アプリの利用に関して生じた損害について、甲は責任を負いません。</p>
+            <h3>第6条（規約違反）</h3><p>違反した場合、利用を制限または停止できます。</p>
+            <h3>第7条（規約の変更）</h3><p>必要に応じて本規約を変更することができます。</p>
+        </div>
+        <div id="tos-footer"><button id="tos-agree-btn" onclick="agreeTos()">同意してはじめる</button></div>
+    </div>
+</div>
+<div id="game_app"></div>
+
+<script>
+// 利用規約
+var overlay=document.getElementById('tos-overlay');
+['click','mousedown','mouseup','pointerdown','pointerup'].forEach(function(ev){
+    overlay.addEventListener(ev,function(e){e.stopPropagation();});
+});
+['touchstart','touchend'].forEach(function(ev){
+    overlay.addEventListener(ev,function(e){e.stopPropagation();},{passive:false});
+});
+function agreeTos(){
+    overlay.style.transition='opacity 0.3s';
+    overlay.style.opacity='0';
+    setTimeout(function(){overlay.style.display='none';},300);
+}
+</script>
+
+<script>
+(function(){
+    // パズルエリア定義（ゲーム座標）
+    var GW=1920, GH=1080;
+    var AX=501, AY=136, AW=1176, AH=825;
+
+    // ズーム・パン状態（bundle.jsのupdateループが参照）
+    window._zm=1.0;
+    window._px=0;
+    window._py=0;
+
+    var cv=null;
+
+    var initTimer=setInterval(function(){
+        var c=document.querySelector('#game_app canvas');
+        if(!c) return;
+        cv=c; clearInterval(initTimer);
+        attachZoomEvents();
+        // 問題5: MainScene再入時にzoomリセット
+        var _prevMainScene=false;
+        setInterval(function(){
+            var now=window._inMainScene===true;
+            if(now&&!_prevMainScene){
+                window._zm=1.0; window._px=0; window._py=0;
+            }
+            _prevMainScene=now;
+        },300);
+    },100);
+
+    function isMainScene(){return window._inMainScene===true;}
+
+    function clamp(){
+        var zm=window._zm;
+        if(zm<=1.0001){window._px=0;window._py=0;return;}
+        window._px=Math.max(0,Math.min(AW*(1-1/zm),window._px));
+        window._py=Math.max(0,Math.min(AH*(1-1/zm),window._py));
+    }
+
+    function toGame(cx,cy){
+        var r=cv.getBoundingClientRect();
+        return{x:(cx-r.left)*GW/r.width, y:(cy-r.top)*GH/r.height};
+    }
+    function inPuzzle(gx,gy){
+        return gx>=AX&&gx<=AX+AW&&gy>=AY&&gy<=AY+AH;
+    }
+
+    function attachZoomEvents(){
+        // ホイールズーム（パズルエリア内のみ）
+        window.addEventListener('wheel',function(e){
+            if(!isMainScene()||!cv) return;
+            var g=toGame(e.clientX,e.clientY);
+            if(!inPuzzle(g.x,g.y)) return;
+            e.preventDefault();
+            var oz=window._zm;
+            var nz=Math.min(2.0,Math.max(1.0,oz+(e.deltaY<0?0.1:-0.1)));
+            if(nz===oz) return;
+            // ズーム中心を維持
+            var cx=g.x-AX, cy=g.y-AY;
+            window._px=(window._px+cx/oz)-cx/nz;
+            window._py=(window._py+cy/oz)-cy/nz;
+            window._zm=nz;
+            clamp();
+        },{passive:false});
+
+        // 中ボタンドラッグ = パン
+        var panState={on:false,sx:0,sy:0,opx:0,opy:0};
+        window.addEventListener('mousedown',function(e){
+            if(!isMainScene()) return;
+            if(e.button===1&&window._zm>1.0001){
+                e.preventDefault();
+                panState.on=true;
+                var g=toGame(e.clientX,e.clientY);
+                panState.sx=g.x; panState.sy=g.y;
+                panState.opx=window._px; panState.opy=window._py;
+            }
+        },true);
+        window.addEventListener('mouseup',function(e){
+            if(e.button===1) panState.on=false;
+        },true);
+        window.addEventListener('mousemove',function(e){
+            if(!panState.on||window._zm<=1.0001) return;
+            var g=toGame(e.clientX,e.clientY);
+            window._px=panState.opx-(g.x-panState.sx)/window._zm;
+            window._py=panState.opy-(g.y-panState.sy)/window._zm;
+            clamp();
+        },true);
+
+        // タッチ: ピンチズーム＋2本指パン
+        var tc={t:{},d0:0,z0:1,px0:0,py0:0,cx0:0,cy0:0,active:false};
+        window.addEventListener('touchstart',function(e){
+            if(!isMainScene()||!cv) return;
+            for(var i=0;i<e.changedTouches.length;i++){
+                var t=e.changedTouches[i];
+                tc.t[t.identifier]={x:t.clientX,y:t.clientY};
+            }
+            var k=Object.keys(tc.t);
+            if(k.length>=2){
+                var a=tc.t[k[0]],b=tc.t[k[1]];
+                var mid=toGame((a.x+b.x)/2,(a.y+b.y)/2);
+                if(!inPuzzle(mid.x,mid.y)){tc.active=false;return;}
+                tc.active=true;
+                tc.d0=Math.hypot(b.x-a.x,b.y-a.y)||1;
+                tc.z0=window._zm; tc.px0=window._px; tc.py0=window._py;
+                tc.cx0=(a.x+b.x)/2; tc.cy0=(a.y+b.y)/2;
+            }
+        },{passive:true});
+        window.addEventListener('touchmove',function(e){
+            if(!tc.active||!cv) return;
+            for(var i=0;i<e.changedTouches.length;i++){
+                var t=e.changedTouches[i];
+                if(tc.t[t.identifier]) tc.t[t.identifier]={x:t.clientX,y:t.clientY};
+            }
+            var k=Object.keys(tc.t);
+            if(k.length<2||!tc.d0) return;
+            e.preventDefault();
+            var a=tc.t[k[0]],b=tc.t[k[1]];
+            var nd=Math.hypot(b.x-a.x,b.y-a.y)||1;
+            var nz=Math.min(2.0,Math.max(1.0,tc.z0*nd/tc.d0));
+            var r=cv.getBoundingClientRect();
+            var SX=GW/r.width, SY=GH/r.height;
+            var pcx=((a.x+b.x)/2-r.left)*SX-AX;
+            var pcy=((a.y+b.y)/2-r.top)*SY-AY;
+            var ocx=(tc.cx0-r.left)*SX-AX;
+            var ocy=(tc.cy0-r.top)*SY-AY;
+            window._zm=nz;
+            window._px=(tc.px0+ocx/tc.z0)-pcx/nz;
+            window._py=(tc.py0+ocy/tc.z0)-pcy/nz;
+            clamp();
+        },{passive:false});
+        window.addEventListener('touchend',function(e){
+            for(var i=0;i<e.changedTouches.length;i++)
+                delete tc.t[e.changedTouches[i].identifier];
+            if(Object.keys(tc.t).length<2){
+                tc.active=false; tc.d0=0;
+                tc.z0=window._zm; tc.px0=window._px; tc.py0=window._py;
+            }
+        },{passive:true});
+    }
+})();
+</script>
+</body>
+</html>
