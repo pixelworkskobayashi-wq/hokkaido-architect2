@@ -320,41 +320,27 @@
         if (!_qrButtonInjected) {
             _qrButtonInjected = true;
 
-            // さつえいボタンと同じ高さ・スタイルでQRボタンを作成
-            // さつえい: x=0.84*1920=1612, QR: さつえいの左隣に配置
-            var qrBtn = mainScene.add.text(
-                1920 * 0.72,   // x: さつえい(0.84)の左側
-                100 * 0.5,     // y: ヘッダー中央
-                '🔲 QR',
-                {
-                    fontSize: '36px',
-                    fontFamily: 'Meiryo, sans-serif',
-                    backgroundColor: '#F59E0B',
-                    color: '#1F2937',
-                    padding: { left: 20, right: 20, top: 8, bottom: 8 },
-                    borderRadius: 8
-                }
-            ).setOrigin(0.5).setDepth(1000).setInteractive({ useHandCursor: true });
+            // QRボタン画像をbase64でPhaserにロード
+            var QR_B64 = 'data:image/png;base64,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';
 
-            // ボタンのホバー効果
-            qrBtn.on('pointerover', function() {
-                this.setStyle({ backgroundColor: '#D97706' });
-            });
-            qrBtn.on('pointerout', function() {
-                this.setStyle({ backgroundColor: '#F59E0B' });
-            });
+            mainScene.textures.addBase64('qr_button', QR_B64);
+            mainScene.textures.once('addtexture-qr_button', function() {
+                var qrBtn = mainScene.add.image(1384, 100 * 0.5, 'qr_button')
+                    .setOrigin(0.5)
+                    .setDepth(1000)
+                    .setScale(72 / 69)  // 隣接ボタン(h=72)と高さを揃える
+                    .setInteractive({ useHandCursor: true });
 
-            // クリックでQRコード生成
-            qrBtn.on('pointerup', function() {
-                generateQR(mainScene);
-            });
+                qrBtn.on('pointerover', function() { this.setAlpha(0.8); });
+                qrBtn.on('pointerout',  function() { this.setAlpha(1.0); });
+                qrBtn.on('pointerup',   function() { generateQR(mainScene); });
 
-            // show_UI / hide_UI に連動して表示・非表示
-            // MainSceneのupdate後にvisible_flagを監視
-            mainScene.events.on('postupdate', function() {
-                if (mainScene.visible_flag !== undefined) {
-                    qrBtn.setVisible(mainScene.visible_flag);
-                }
+                // show_UI / hide_UI に連動
+                mainScene.events.on('postupdate', function() {
+                    if (mainScene.visible_flag !== undefined) {
+                        qrBtn.setVisible(mainScene.visible_flag);
+                    }
+                });
             });
         }
     }, 500);
