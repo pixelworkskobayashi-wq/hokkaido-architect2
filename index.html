@@ -298,7 +298,7 @@
     // ボタン位置計算: Phaserのscale情報を直接使う
     // → getBoundingClientRectより正確でズーム追従も完璧
     var QR_GAME_X = 1384;
-    var QR_GAME_Y = 50;
+    var QR_GAME_Y = 81;  // さつえいボタン実測値から逆算（hs*ws=50はPhaserの論理値で実際と異なる）
     function updateQrBtnPos() {
         var canvas = document.querySelector('#game_app canvas');
         if (!canvas) return;
