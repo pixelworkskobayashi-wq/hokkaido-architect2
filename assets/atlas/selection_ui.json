@@ -4,7 +4,7 @@
 			"image": "selection_ui.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 1000,
+				"w": 1024,
 				"h": 2379
 			},
 			"scale": 1,
