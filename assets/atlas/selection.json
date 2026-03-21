@@ -75,13 +75,13 @@
                     "y": 1001
                 },
                 {
-                    "parts_img": "Coast_site_L.png",
-                    "x": 498,
+                    "parts_img": "Coast_site_R.png",
+                    "x": 1710,
                     "y": 594
                 },
                 {
-                    "parts_img": "Coast_site_R.png",
-                    "x": 1710,
+                    "parts_img": "Coast_site_L.png",
+                    "x": 498,
                     "y": 594
                 }
             ]
