@@ -5,7 +5,7 @@
 			"format": "RGBA8888",
 			"size": {
 				"w": 2048,
-				"h": 2048
+				"h": 4096
 			},
 			"scale": 1,
 			"frames": [
@@ -1314,20 +1314,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 1084,
-						"h": 218
+						"w": 1106,
+						"h": 118
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 1084,
-						"h": 218
+						"w": 1106,
+						"h": 118
 					},
 					"frame": {
-						"x": 627,
-						"y": 1526,
-						"w": 1084,
-						"h": 218
+						"x": 229,
+						"y": 2049,
+						"w": 1106,
+						"h": 118
 					},
 					"anchor": {
 						"x": 0.5,
@@ -1339,19 +1339,19 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 334,
+						"w": 110,
 						"h": 932
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 334,
+						"w": 110,
 						"h": 932
 					},
 					"frame": {
-						"x": 0,
-						"y": 934,
-						"w": 334,
+						"x": 1,
+						"y": 2049,
+						"w": 110,
 						"h": 932
 					},
 					"anchor": {
@@ -1364,20 +1364,45 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 222,
+						"w": 110,
 						"h": 932
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 222,
+						"w": 110,
 						"h": 932
 					},
 					"frame": {
-						"x": 1777,
-						"y": 934,
-						"w": 222,
+						"x": 115,
+						"y": 2049,
+						"w": 110,
 						"h": 932
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "Coast_site_B.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1106,
+						"h": 118
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1106,
+						"h": 118
+					},
+					"frame": {
+						"x": 229,
+						"y": 2171,
+						"w": 1106,
+						"h": 118
 					},
 					"anchor": {
 						"x": 0.5,
