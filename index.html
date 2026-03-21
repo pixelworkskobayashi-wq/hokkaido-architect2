@@ -298,21 +298,33 @@
     // ボタン位置計算: Phaserのscale情報を直接使う
     // → getBoundingClientRectより正確でズーム追従も完璧
     var QR_GAME_X = 1384;
-    var QR_GAME_Y = 81;  // さつえいボタン実測値から逆算（hs*ws=50はPhaserの論理値で実際と異なる）
+    var QR_GAME_Y = 50;
     function updateQrBtnPos() {
         var canvas = document.querySelector('#game_app canvas');
         if (!canvas) return;
         var r = canvas.getBoundingClientRect();
         if (!r.width) return;
 
-        // ゲーム座標(1920x1080)→CSS座標 スケール
-        var scaleX = r.width  / 1920;
-        var scaleY = r.height / 1080;
+        // ページズームを取得（getBCRはズーム込み座標を返すため補正が必要）
+        var zoom = window.devicePixelRatio / (window.screen.width / window.innerWidth);
+        if (!zoom || zoom <= 0) zoom = 1;
 
-        var btnW = 149 * scaleX;
-        var btnH = 61  * scaleY;  // 元画像の高さ61pxをそのままスケール
-        var left = r.left + QR_GAME_X * scaleX - btnW / 2;
-        var top  = r.top  + QR_GAME_Y * scaleY - btnH / 2;
+        // ズームを除いた実効CSS座標に変換
+        var rLeft   = r.left   / zoom;
+        var rTop    = r.top    / zoom;
+        var rWidth  = r.width  / zoom;
+        var rHeight = r.height / zoom;
+
+        // ゲーム座標(1920x1080)→CSS座標スケール
+        var scaleX = rWidth  / 1920;
+        var scaleY = rHeight / 1080;
+
+        // ボタンサイズ：さつえいボタンと同じゲーム高さ72に合わせる
+        var btnH = 72  * scaleY;
+        var btnW = 149 * (btnH / 61);
+
+        var left = rLeft + QR_GAME_X * scaleX - btnW / 2;
+        var top  = rTop  + QR_GAME_Y * scaleY - btnH / 2;
 
         var btn = document.getElementById('qr-game-btn');
         if (!btn) return;
