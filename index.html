@@ -310,7 +310,11 @@
                 break;
             }
         }
-        if (!mainScene) return;
+        if (!mainScene) {
+            // MainSceneが非アクティブになったらフラグをリセット
+            _qrButtonInjected = false;
+            return;
+        }
 
         // QRボタンをPhaserのMainScene内にスプライトとして追加
         if (!_qrButtonInjected) {
