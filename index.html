@@ -300,33 +300,19 @@
     var QR_GAME_X = 1384;
     var QR_GAME_Y = 50;
     function updateQrBtnPos() {
-        var game = window._phaserGame;
-        if (!game || !game.scale) return;
-        var sc = game.scale;
-        var bounds = sc.canvasBounds;
-        var dsX = sc.displayScale ? sc.displayScale.x : 1;
-        var dsY = sc.displayScale ? sc.displayScale.y : 1;
-        if (!bounds || !bounds.width) return;
+        var canvas = document.querySelector('#game_app canvas');
+        if (!canvas) return;
+        var r = canvas.getBoundingClientRect();
+        if (!r.width) return;
 
-        // ゲーム座標→CSS座標変換
-        var btnW = 149 / dsX;
-        var btnH = 72  / dsY;
-        var left = bounds.left + QR_GAME_X / dsX - btnW / 2;
-        var top  = bounds.top  + QR_GAME_Y / dsY - btnH / 2;
+        // ゲーム座標(1920x1080)→CSS座標 スケール
+        var scaleX = r.width  / 1920;
+        var scaleY = r.height / 1080;
 
-        // デバッグ: 初回のみコンソール出力
-        if (!window._qrDebugLogged) {
-            window._qrDebugLogged = true;
-            console.log('[QR] canvasBounds:', JSON.stringify({left:Math.round(bounds.left),top:Math.round(bounds.top),w:Math.round(bounds.width),h:Math.round(bounds.height)}));
-            console.log('[QR] displayScale:', dsX.toFixed(4), dsY.toFixed(4));
-            console.log('[QR] btn:', {left:Math.round(left),top:Math.round(top),w:Math.round(btnW),h:Math.round(btnH)});
-            // canvas直接確認
-            var cv = document.querySelector('#game_app canvas');
-            if (cv) {
-                var r = cv.getBoundingClientRect();
-                console.log('[QR] getBCR:', JSON.stringify({left:Math.round(r.left),top:Math.round(r.top),w:Math.round(r.width),h:Math.round(r.height)}));
-            }
-        }
+        var btnW = 149 * scaleX;
+        var btnH = 61  * scaleY;  // 元画像の高さ61pxをそのままスケール
+        var left = r.left + QR_GAME_X * scaleX - btnW / 2;
+        var top  = r.top  + QR_GAME_Y * scaleY - btnH / 2;
 
         var btn = document.getElementById('qr-game-btn');
         if (!btn) return;
@@ -335,6 +321,14 @@
         btn.style.width  = btnW + 'px';
         btn.style.height = btnH + 'px';
     }
+
+    // requestAnimationFrameで毎フレーム追従（ズームに完全同期）
+    function _qrRafLoop() {
+        updateQrBtnPos();
+        requestAnimationFrame(_qrRafLoop);
+    }
+    requestAnimationFrame(_qrRafLoop);
+
     window.addEventListener('resize', updateQrBtnPos);
 
     // DOM要素は1度だけ作成してページ全体で再利用
