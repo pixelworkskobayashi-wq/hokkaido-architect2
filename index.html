@@ -337,6 +337,9 @@
         /* ホイールズーム（canvas上のみ） */
         window.addEventListener('wheel', function(e){
             if(!cv||!ready) return;
+            /* 利用規約オーバーレイ表示中はズーム無効 */
+            var ov=document.getElementById('tos-overlay');
+            if(ov&&ov.style.display!=='none') return;
             var r=cv.getBoundingClientRect();
             if(e.clientX<r.left||e.clientX>r.right||
                e.clientY<r.top ||e.clientY>r.bottom) return;
