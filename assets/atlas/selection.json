@@ -58,6 +58,37 @@
                     "y": 391
                 }
             ]
+        },
+        {
+            "name": "海岸",
+            "img": "Environment_imageC.png",
+            "text": "Overview_text_C.png",
+            "parts": [
+                {
+                    "parts_img": "Coast_site_T.png",
+                    "x": 1104,
+                    "y": 187,
+                    "angle": 0
+                },
+                {
+                    "parts_img": "Coast_site_B.png",
+                    "x": 1104,
+                    "y": 1001,
+                    "angle": 0
+                },
+                {
+                    "parts_img": "Coast_site_R.png",
+                    "x": 1710,
+                    "y": 594,
+                    "angle": 0
+                },
+                {
+                    "parts_img": "Coast_site_L.png",
+                    "x": 498,
+                    "y": 594,
+                    "angle": 0
+                }
+            ]
         }
     ]
 }

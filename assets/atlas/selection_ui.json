@@ -5,7 +5,7 @@
 			"format": "RGBA8888",
 			"size": {
 				"w": 1024,
-				"h": 2048
+				"h": 2379
 			},
 			"scale": 1,
 			"frames": [
@@ -217,6 +217,48 @@
 						"y": 1768,
 						"w": 504,
 						"h": 37
+					}
+				},
+				{
+					"filename": "Environment_imageC.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 584,
+						"h": 412
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 584,
+						"h": 412
+					},
+					"frame": {
+						"x": 1,
+						"y": 1809,
+						"w": 584,
+						"h": 412
+					}
+				},
+				{
+					"filename": "Overview_text_C.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 534,
+						"h": 150
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 534,
+						"h": 150
+					},
+					"frame": {
+						"x": 1,
+						"y": 2225,
+						"w": 534,
+						"h": 150
 					}
 				}
 			]
