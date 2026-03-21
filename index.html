@@ -295,21 +295,29 @@
     var _qrButtonInjected = false;
     var _currentMainScene = null;  // 常に最新のMainScene参照を保持
 
-    // ボタン位置計算（グローバルで定義して重複登録しない）
+    // ボタン位置計算: Phaserのscale情報を直接使う
+    // → getBoundingClientRectより正確でズーム追従も完璧
     var QR_GAME_X = 1384;
     var QR_GAME_Y = 50;
     function updateQrBtnPos() {
-        var canvas = document.querySelector('#game_app canvas');
-        if (!canvas) return;
-        var r = canvas.getBoundingClientRect();
-        var scaleX = r.width  / 1920;
-        var scaleY = r.height / 1080;
-        var btnH = 72 * scaleY;
-        var btnW = 149 * (btnH / 61);
+        var game = window._phaserGame;
+        if (!game || !game.scale) return;
+        var sc = game.scale;
+        var bounds = sc.canvasBounds;
+        var dsX = sc.displayScale ? sc.displayScale.x : 1;
+        var dsY = sc.displayScale ? sc.displayScale.y : 1;
+        if (!bounds || !bounds.width) return;
+
+        // ゲーム座標→CSS座標変換
+        var btnW = 149 / dsX;
+        var btnH = 72  / dsY;
+        var left = bounds.left + QR_GAME_X / dsX - btnW / 2;
+        var top  = bounds.top  + QR_GAME_Y / dsY - btnH / 2;
+
         var btn = document.getElementById('qr-game-btn');
         if (!btn) return;
-        btn.style.left   = (r.left + QR_GAME_X * scaleX - btnW / 2) + 'px';
-        btn.style.top    = (r.top  + QR_GAME_Y * scaleY - btnH / 2) + 'px';
+        btn.style.left   = left + 'px';
+        btn.style.top    = top  + 'px';
         btn.style.width  = btnW + 'px';
         btn.style.height = btnH + 'px';
     }
@@ -363,7 +371,7 @@
         // 初回起動時のみ位置を計算
         if (!_qrButtonInjected) {
             _qrButtonInjected = true;
-            setTimeout(updateQrBtnPos, 100);
+            updateQrBtnPos();
         }
 
         // visible_flag と scene_changeing で表示・非表示を制御
@@ -371,7 +379,7 @@
         btn.style.display = shouldShow ? 'block' : 'none';
         if (shouldShow) updateQrBtnPos();
 
-    }, 100);
+    }, 16);  // ~60fps相当で監視・更新
     // QRコード生成処理
     function generateQR(scene) {
         var overlay = document.getElementById('qr-overlay');
