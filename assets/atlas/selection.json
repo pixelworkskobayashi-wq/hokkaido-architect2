@@ -67,16 +67,16 @@
                 {
                     "parts_img": "Coast_site_T.png",
                     "x": 1104,
-                    "y": 187
+                    "y": 238
                 },
                 {
                     "parts_img": "Coast_site_L.png",
-                    "x": 498,
+                    "x": 395,
                     "y": 594
                 },
                 {
                     "parts_img": "Coast_site_R.png",
-                    "x": 1710,
+                    "x": 1757,
                     "y": 594
                 }
             ]
