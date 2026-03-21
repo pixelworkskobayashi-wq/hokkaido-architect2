@@ -376,24 +376,41 @@
                 // グリッドを元に戻す
                 scene.edit_grid.forEach(function(g) { g.visible = true; });
 
-                var base64 = imageElement.src; // data:image/png;base64,...
+                // base64データからヘッダー部分を除去
+                var base64 = imageElement.src.replace(/^data:image\/png;base64,/, '');
 
-                // QRコードを生成（base64をそのままQR化）
-                qrContainer.innerHTML = '';
-                try {
+                // ImgBB APIに画像をアップロード（1時間で自動削除）
+                var formData = new FormData();
+                formData.append('key', '4e877cfcc93adfe58b4c93d09a600cbc');
+                formData.append('image', base64);
+                formData.append('expiration', '3600'); // 1時間で自動削除
+
+                fetch('https://api.imgbb.com/1/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (!data.success) throw new Error('アップロード失敗');
+
+                    var imageUrl = data.data.url;
+
+                    // 短いURLをQRコード化
+                    qrContainer.innerHTML = '';
                     new QRCode(qrContainer, {
-                        text: base64,
+                        text: imageUrl,
                         width: 256,
                         height: 256,
-                        correctLevel: QRCode.CorrectLevel.L  // データ量が大きいのでエラー訂正は最低レベル
+                        correctLevel: QRCode.CorrectLevel.M
                     });
-                } catch(e) {
-                    // base64が大きすぎてQRに入らない場合のフォールバック
+                })
+                .catch(function(e) {
                     qrContainer.innerHTML =
-                        '<div style="padding:16px;text-align:center;font-family:Meiryo,sans-serif;color:#c00;font-size:13px;">' +
-                        '間取りのデータが大きすぎてQRコードに変換できませんでした。<br>' +
-                        'さつえいボタンで画像を保存してください。</div>';
-                }
+                        '<div style="padding:16px;text-align:center;font-family:Meiryo,sans-serif;' +
+                        'color:#c00;font-size:13px;">' +
+                        'QRコードの生成に失敗しました。<br>' +
+                        'ネットワーク接続を確認してください。</div>';
+                });
             }
         );
     }
