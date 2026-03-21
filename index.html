@@ -314,6 +314,20 @@
         var left = bounds.left + QR_GAME_X / dsX - btnW / 2;
         var top  = bounds.top  + QR_GAME_Y / dsY - btnH / 2;
 
+        // デバッグ: 初回のみコンソール出力
+        if (!window._qrDebugLogged) {
+            window._qrDebugLogged = true;
+            console.log('[QR] canvasBounds:', JSON.stringify({left:Math.round(bounds.left),top:Math.round(bounds.top),w:Math.round(bounds.width),h:Math.round(bounds.height)}));
+            console.log('[QR] displayScale:', dsX.toFixed(4), dsY.toFixed(4));
+            console.log('[QR] btn:', {left:Math.round(left),top:Math.round(top),w:Math.round(btnW),h:Math.round(btnH)});
+            // canvas直接確認
+            var cv = document.querySelector('#game_app canvas');
+            if (cv) {
+                var r = cv.getBoundingClientRect();
+                console.log('[QR] getBCR:', JSON.stringify({left:Math.round(r.left),top:Math.round(r.top),w:Math.round(r.width),h:Math.round(r.height)}));
+            }
+        }
+
         var btn = document.getElementById('qr-game-btn');
         if (!btn) return;
         btn.style.left   = left + 'px';
