@@ -122,6 +122,72 @@
     </style>
     <script src="phaser.min.js"></script>
     <script src="./dist/bundle.js"></script>
+    <!-- QRコード生成ライブラリ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        /* ===== QRオーバーレイ ===== */
+        #qr-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 9998;
+            align-items: center;
+            justify-content: center;
+        }
+        #qr-overlay.visible { display: flex; }
+        #qr-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px 32px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+            min-width: 320px;
+        }
+        #qr-title {
+            font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d6a3f;
+        }
+        #qr-desc {
+            font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            font-size: 13px;
+            color: #555;
+            text-align: center;
+            line-height: 1.6;
+        }
+        #qr-code {
+            padding: 12px;
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        #qr-code img, #qr-code canvas { display: block; }
+        #qr-loading {
+            font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            font-size: 14px;
+            color: #888;
+            padding: 40px;
+        }
+        #qr-close-btn {
+            background: #2d6a3f;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 40px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            transition: background 0.2s;
+        }
+        #qr-close-btn:hover { background: #1e5030; }
+    </style>
 </head>
 
 <body>
@@ -176,6 +242,18 @@
 
     <div id="game_app"></div>
 
+    <!-- QRコードオーバーレイ -->
+    <div id="qr-overlay">
+        <div id="qr-box">
+            <div id="qr-title">📱 間取りをスマホに送る</div>
+            <div id="qr-desc">QRコードをスマートフォンのカメラで読み取ると<br>間取り画像が表示されます</div>
+            <div id="qr-code">
+                <div id="qr-loading">QRコードを生成中...</div>
+            </div>
+            <button id="qr-close-btn" onclick="closeQR()">閉じる</button>
+        </div>
+    </div>
+
     <script>
         var overlay = document.getElementById('tos-overlay');
 
@@ -209,6 +287,125 @@
                 overlay.style.display = 'none';
             }, 300);
         }
+    </script>
+
+    <script>
+    /* ===== QRコード生成機能 ===== */
+
+    // QRボタンをゲームのヘッダーバーに追加
+    // Phaserゲームのcanvasが準備できた後に注入する
+    var _qrButtonInjected = false;
+    var _qrCheckInterval = setInterval(function() {
+        var game = window._phaserGame;
+        if (!game || !game.scene) return;
+
+        // MainSceneが起動しているか確認
+        var scenes = game.scene.scenes;
+        var mainScene = null;
+        for (var i = 0; i < scenes.length; i++) {
+            if (scenes[i].sys && scenes[i].sys.settings &&
+                scenes[i].sys.settings.key === 'MainScene' &&
+                scenes[i].sys.settings.active) {
+                mainScene = scenes[i];
+                break;
+            }
+        }
+        if (!mainScene) return;
+
+        // QRボタンをPhaserのMainScene内にスプライトとして追加
+        if (!_qrButtonInjected) {
+            _qrButtonInjected = true;
+
+            // さつえいボタンと同じ高さ・スタイルでQRボタンを作成
+            // さつえい: x=0.84*1920=1612, QR: さつえいの左隣に配置
+            var qrBtn = mainScene.add.text(
+                1920 * 0.72,   // x: さつえい(0.84)の左側
+                100 * 0.5,     // y: ヘッダー中央
+                '🔲 QR',
+                {
+                    fontSize: '36px',
+                    fontFamily: 'Meiryo, sans-serif',
+                    backgroundColor: '#F59E0B',
+                    color: '#1F2937',
+                    padding: { left: 20, right: 20, top: 8, bottom: 8 },
+                    borderRadius: 8
+                }
+            ).setOrigin(0.5).setDepth(1000).setInteractive({ useHandCursor: true });
+
+            // ボタンのホバー効果
+            qrBtn.on('pointerover', function() {
+                this.setStyle({ backgroundColor: '#D97706' });
+            });
+            qrBtn.on('pointerout', function() {
+                this.setStyle({ backgroundColor: '#F59E0B' });
+            });
+
+            // クリックでQRコード生成
+            qrBtn.on('pointerup', function() {
+                generateQR(mainScene);
+            });
+
+            // show_UI / hide_UI に連動して表示・非表示
+            // MainSceneのupdate後にvisible_flagを監視
+            mainScene.events.on('postupdate', function() {
+                if (mainScene.visible_flag !== undefined) {
+                    qrBtn.setVisible(mainScene.visible_flag);
+                }
+            });
+        }
+    }, 500);
+
+    // QRコード生成処理
+    function generateQR(scene) {
+        var overlay = document.getElementById('qr-overlay');
+        var qrContainer = document.getElementById('qr-code');
+
+        // オーバーレイを表示（ローディング状態）
+        qrContainer.innerHTML = '<div id="qr-loading">QRコードを生成中...</div>';
+        overlay.classList.add('visible');
+
+        // グリッドを非表示にしてからスクショ（snapshot_downloadと同じ処理）
+        scene.edit_grid.forEach(function(g) { g.visible = false; });
+
+        scene.renderer.snapshotArea(
+            scene.stage_base.x - scene.stage_base.width * 0.5,
+            scene.stage_base.y - scene.stage_base.height * 0.5,
+            scene.stage_base.width,
+            scene.stage_base.height,
+            function(imageElement) {
+                // グリッドを元に戻す
+                scene.edit_grid.forEach(function(g) { g.visible = true; });
+
+                var base64 = imageElement.src; // data:image/png;base64,...
+
+                // QRコードを生成（base64をそのままQR化）
+                qrContainer.innerHTML = '';
+                try {
+                    new QRCode(qrContainer, {
+                        text: base64,
+                        width: 256,
+                        height: 256,
+                        correctLevel: QRCode.CorrectLevel.L  // データ量が大きいのでエラー訂正は最低レベル
+                    });
+                } catch(e) {
+                    // base64が大きすぎてQRに入らない場合のフォールバック
+                    qrContainer.innerHTML =
+                        '<div style="padding:16px;text-align:center;font-family:Meiryo,sans-serif;color:#c00;font-size:13px;">' +
+                        '間取りのデータが大きすぎてQRコードに変換できませんでした。<br>' +
+                        'さつえいボタンで画像を保存してください。</div>';
+                }
+            }
+        );
+    }
+
+    function closeQR() {
+        document.getElementById('qr-overlay').classList.remove('visible');
+    }
+
+    // QRオーバーレイ上のホイール操作でゲームがズームしないよう制御
+    document.getElementById('qr-overlay').addEventListener('wheel', function(e) {
+        e.stopPropagation();
+    }, { passive: false });
     </script>
 
 
@@ -337,9 +534,6 @@
         /* ホイールズーム（canvas上のみ） */
         window.addEventListener('wheel', function(e){
             if(!cv||!ready) return;
-            /* 利用規約オーバーレイ表示中はズーム無効 */
-            var ov=document.getElementById('tos-overlay');
-            if(ov&&ov.style.display!=='none') return;
             var r=cv.getBoundingClientRect();
             if(e.clientX<r.left||e.clientX>r.right||
                e.clientY<r.top ||e.clientY>r.bottom) return;
