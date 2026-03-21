@@ -386,11 +386,14 @@
                 this.style.opacity = '1';
             });
 
-            // visible_flag に連動して表示・非表示を切り替え
+            // visible_flag と scene_changeing に連動して表示・非表示を切り替え
+            // scene_changeing: SelectionSceneへ戻る直前にtrueになる
             mainScene.events.on('postupdate', function() {
                 if (mainScene.visible_flag !== undefined) {
-                    qrBtnEl.style.display = mainScene.visible_flag ? 'block' : 'none';
-                    updateQrBtnPos(); // 毎フレーム位置を追従
+                    // scene_changeingがtrueの場合は即座に非表示（遷移中）
+                    var shouldShow = mainScene.visible_flag && !mainScene.scene_changeing;
+                    qrBtnEl.style.display = shouldShow ? 'block' : 'none';
+                    if (shouldShow) updateQrBtnPos();
                 }
             });
         }
