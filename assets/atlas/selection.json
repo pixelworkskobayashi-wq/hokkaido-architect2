@@ -67,20 +67,17 @@
                 {
                     "parts_img": "Coast_site_T.png",
                     "x": 1104,
-                    "y": 238,
-                    "angle": 0
+                    "y": 187
                 },
                 {
                     "parts_img": "Coast_site_L.png",
-                    "x": 389,
-                    "y": 277,
-                    "angle": 0
+                    "x": 498,
+                    "y": 594
                 },
                 {
                     "parts_img": "Coast_site_R.png",
-                    "x": 1766,
-                    "y": 277,
-                    "angle": 0
+                    "x": 1710,
+                    "y": 594
                 }
             ]
         }
