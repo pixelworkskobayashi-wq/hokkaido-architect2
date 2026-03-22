@@ -293,27 +293,30 @@
     /* ===== QRコード生成機能 ===== */
 
     var _qrButtonInjected = false;
-    var _currentMainScene = null;  // 常に最新のMainScene参照を保持
+    var _currentMainScene = null;
 
-    // ボタン位置計算: Phaserのscale情報を直接使う
-    // → getBoundingClientRectより正確でズーム追従も完璧
     var QR_GAME_X = 1384;
     var QR_GAME_Y = 50;
+
     function updateQrBtnPos() {
-        var canvas = document.querySelector('#game_app canvas');
-        if (!canvas) return;
-        var r = canvas.getBoundingClientRect();
-        if (!r.width) return;
+        var gameApp = document.getElementById('game_app');
+        var canvas  = document.querySelector('#game_app canvas');
+        if (!gameApp || !canvas) return;
+        var gr = gameApp.getBoundingClientRect();
+        var cr = canvas.getBoundingClientRect();
+        if (!cr.width) return;
 
-        var scaleX = r.width  / 1920;
-        var scaleY = r.height / 1080;
+        var scaleX = cr.width  / 1920;
+        var scaleY = cr.height / 1080;
 
-        // さつえいボタンと同じゲーム高さ72でスケール
-        var btnH = 72 * scaleY;
+        // game_app内の相対座標で配置
+        var canvasLeft = cr.left - gr.left;
+        var canvasTop  = cr.top  - gr.top;
+
+        var btnH = 72  * scaleY;
         var btnW = 149 * (btnH / 61);
-
-        var left = r.left + QR_GAME_X * scaleX - btnW / 2;
-        var top  = r.top  + QR_GAME_Y * scaleY - btnH / 2;
+        var left = canvasLeft + QR_GAME_X * scaleX - btnW / 2;
+        var top  = canvasTop  + QR_GAME_Y * scaleY - btnH / 2;
 
         var btn = document.getElementById('qr-game-btn');
         if (!btn) return;
@@ -324,44 +327,44 @@
     }
     window.addEventListener('resize', updateQrBtnPos);
 
-    // DOM要素は1度だけ作成してページ全体で再利用
-    // divコンテナ + background-imageで確実に全体表示
-    (function() {
+    // game_appをposition:relativeにしてabsolute配置の基準にする
+    (function waitGameApp() {
+        var ga = document.getElementById('game_app');
+        if (!ga) { setTimeout(waitGameApp, 50); return; }
+        ga.style.position = 'relative';
+
         var btn = document.createElement('div');
         btn.id = 'qr-game-btn';
         btn.style.cssText = [
-            'position:fixed',
+            'position:absolute',
             'cursor:pointer',
-            'z-index:9000',
+            'z-index:99999',
             'display:none',
             'pointer-events:auto',
             'background-size:100% 100%',
             'background-repeat:no-repeat',
-            'background-position:center',
-            'background-image:url("data:image/png;base64,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")',
+            'background-image:url("data:image/png;base64,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")' ,
         ].join(';');
-        btn.addEventListener('pointerover', function() { this.style.opacity = '0.8'; });
-        btn.addEventListener('pointerout',  function() { this.style.opacity = '1'; });
+        btn.addEventListener('pointerover', function() { this.style.opacity='0.8'; });
+        btn.addEventListener('pointerout',  function() { this.style.opacity='1'; });
         btn.addEventListener('pointerup',   function() {
             if (_currentMainScene) generateQR(_currentMainScene);
         });
-        document.body.appendChild(btn);
+        ga.appendChild(btn);
     })();
 
-    // setIntervalで一元管理（postupdateは使わない→重複登録問題を回避）
+    // setIntervalで一元管理
     setInterval(function() {
         var game = window._phaserGame;
         if (!game || !game.scene) return;
 
-        // MainSceneがアクティブか確認
         var scenes = game.scene.scenes;
         var mainScene = null;
         for (var i = 0; i < scenes.length; i++) {
             if (scenes[i].sys && scenes[i].sys.settings &&
                 scenes[i].sys.settings.key === 'MainScene' &&
                 scenes[i].sys.settings.active) {
-                mainScene = scenes[i];
-                break;
+                mainScene = scenes[i]; break;
             }
         }
 
@@ -369,29 +372,26 @@
         if (!btn) return;
 
         if (!mainScene) {
-            // MainScene非アクティブ → 非表示・フラグリセット
             btn.style.display = 'none';
             _qrButtonInjected = false;
             _currentMainScene = null;
             return;
         }
 
-        // 最新のシーン参照を更新
         _currentMainScene = mainScene;
 
-        // 初回起動時のみ位置を計算
         if (!_qrButtonInjected) {
             _qrButtonInjected = true;
             updateQrBtnPos();
         }
 
-        // visible_flag と scene_changeing で表示・非表示を制御
         var shouldShow = mainScene.visible_flag && !mainScene.scene_changeing;
         btn.style.display = shouldShow ? 'block' : 'none';
         if (shouldShow) updateQrBtnPos();
 
-    }, 16);  // ~60fps相当で監視・更新
-    // QRコード生成処理
+    }, 16);
+
+        // QRコード生成処理
     function generateQR(scene) {
         var overlay = document.getElementById('qr-overlay');
         var qrContainer = document.getElementById('qr-code');
