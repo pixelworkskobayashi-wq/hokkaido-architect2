@@ -353,7 +353,7 @@
         ga.appendChild(btn);
     })();
 
-    // setIntervalで一元管理
+    // setIntervalはdisplay制御のみ担当（visible_flag / scene_changeing監視）
     setInterval(function() {
         var game = window._phaserGame;
         if (!game || !game.scene) return;
@@ -382,14 +382,19 @@
 
         if (!_qrButtonInjected) {
             _qrButtonInjected = true;
-            updateQrBtnPos();
         }
 
         var shouldShow = mainScene.visible_flag && !mainScene.scene_changeing;
         btn.style.display = shouldShow ? 'block' : 'none';
-        if (shouldShow) updateQrBtnPos();
 
     }, 16);
+
+    // RAFは位置・サイズ更新のみ担当（描画と完全同期）
+    function _qrRafLoop() {
+        updateQrBtnPos();
+        requestAnimationFrame(_qrRafLoop);
+    }
+    requestAnimationFrame(_qrRafLoop);
 
         // QRコード生成処理
     function generateQR(scene) {
