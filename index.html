@@ -305,26 +305,41 @@
         var r = canvas.getBoundingClientRect();
         if (!r.width) return;
 
-        // ページズームを取得（getBCRはズーム込み座標を返すため補正が必要）
+        // ページズームを取得
         var zoom = window.devicePixelRatio / (window.screen.width / window.innerWidth);
         if (!zoom || zoom <= 0) zoom = 1;
 
-        // ズームを除いた実効CSS座標に変換
+        // デバッグ（初回のみ）
+        if (!window._qrDebug2) {
+            window._qrDebug2 = true;
+            console.log('[QR2] devicePixelRatio:', window.devicePixelRatio);
+            console.log('[QR2] screen.width:', window.screen.width);
+            console.log('[QR2] innerWidth:', window.innerWidth);
+            console.log('[QR2] zoom計算値:', zoom);
+            console.log('[QR2] r:', {left:r.left,top:r.top,w:r.width,h:r.height});
+        }
+
         var rLeft   = r.left   / zoom;
         var rTop    = r.top    / zoom;
         var rWidth  = r.width  / zoom;
         var rHeight = r.height / zoom;
 
-        // ゲーム座標(1920x1080)→CSS座標スケール
         var scaleX = rWidth  / 1920;
         var scaleY = rHeight / 1080;
 
-        // ボタンサイズ：さつえいボタンと同じゲーム高さ72に合わせる
         var btnH = 72  * scaleY;
         var btnW = 149 * (btnH / 61);
 
         var left = rLeft + QR_GAME_X * scaleX - btnW / 2;
         var top  = rTop  + QR_GAME_Y * scaleY - btnH / 2;
+
+        if (!window._qrDebug2b) {
+            window._qrDebug2b = true;
+            console.log('[QR2] rWidth:', rWidth, 'rHeight:', rHeight);
+            console.log('[QR2] scaleX:', scaleX, 'scaleY:', scaleY);
+            console.log('[QR2] btnW:', btnW, 'btnH:', btnH);
+            console.log('[QR2] left:', left, 'top:', top);
+        }
 
         var btn = document.getElementById('qr-game-btn');
         if (!btn) return;
