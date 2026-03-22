@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html rang="ja">
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="googlebot" content="noindex">
+
+<head>
+    <title>パズルで住まいを考えよう！</title>
+    <style>
+        html,
+        body {
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        /* ===== 利用規約オーバーレイ ===== */
+        #tos-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            /* クリック・タッチをすべてオーバーレイで受け止める */
+            pointer-events: all;
+        }
+
+        #tos-box {
+            background: #fff;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        #tos-header {
+            background: #2d6a3f;
+            color: #fff;
+            padding: 18px 24px;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        #tos-body {
+            padding: 20px 24px;
+            overflow-y: auto;
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        #tos-body h3 {
+            font-size: 15px;
+            color: #2d6a3f;
+            margin: 16px 0 6px;
+            border-left: 4px solid #2d6a3f;
+            padding-left: 8px;
+        }
+
+        #tos-body p { margin: 0 0 10px; }
+
+        #tos-body ol {
+            margin: 6px 0 10px 20px;
+            padding: 0;
+        }
+
+        #tos-body ol li { margin-bottom: 4px; }
+
+        #tos-intro {
+            background: #f5f9f6;
+            border: 1px solid #c8e6c9;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #444;
+        }
+
+        #tos-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e0e0e0;
+            background: #fafafa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        #tos-agree-btn {
+            background: #2d6a3f;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 60px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            letter-spacing: 1px;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 3px 10px rgba(45,106,63,0.3);
+        }
+
+        #tos-agree-btn:hover { background: #1e5030; }
+        #tos-agree-btn:active { transform: scale(0.97); }
+
+        #tos-body::-webkit-scrollbar { width: 6px; }
+        #tos-body::-webkit-scrollbar-track { background: #f0f0f0; }
+        #tos-body::-webkit-scrollbar-thumb { background: #a5d6a7; border-radius: 3px; }
+    </style>
+    <script src="phaser.min.js"></script>
+    <script src="./dist/bundle.js"></script>
+    <!-- QRコード生成ライブラリ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        /* ===== QRオーバーレイ ===== */
+        #qr-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 9998;
+            align-items: center;
+            justify-content: center;
+        }
+        #qr-overlay.visible { display: flex; }
+        #qr-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px 32px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+            min-width: 320px;
+        }
+        #qr-title {
+            font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d6a3f;
+        }
+        #qr-desc {
+            font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            font-size: 13px;
+            color: #555;
+            text-align: center;
+            line-height: 1.6;
+        }
+        #qr-code {
+            padding: 12px;
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        #qr-code img, #qr-code canvas { display: block; }
+        #qr-loading {
+            font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            font-size: 14px;
+            color: #888;
+            padding: 40px;
+        }
+        #qr-close-btn {
+            background: #2d6a3f;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 40px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            transition: background 0.2s;
+        }
+        #qr-close-btn:hover { background: #1e5030; }
+    </style>
+</head>
+
+<body>
+
+    <!-- 利用規約オーバーレイ -->
+    <div id="tos-overlay">
+        <div id="tos-box">
+            <div id="tos-header">📋 利用規約</div>
+            <div id="tos-body">
+                <div id="tos-intro">
+                    本アプリをご利用いただく前に、以下の利用規約（以下「本規約」といいます）をよくお読みください。利用者は、本規約に同意した上で本アプリを利用するものとします。
+                </div>
+
+                <h3>第1条（目的）</h3>
+                <p>本アプリは、青少年の健全な教育および住まいに関する理解を深め、賢い消費者としての知識を育むことを目的とした教育支援ツールです。</p>
+
+                <h3>第2条（著作権および権利帰属）</h3>
+                <p>本アプリおよび本アプリ内で提供されるプログラム、デザイン、文章、画像、間取り作成機能および生成物に関する著作権その他一切の権利は、一般社団法人北海道建築士会（以下「甲」といいます）に帰属します。</p>
+
+                <h3>第3条（利用許諾）</h3>
+                <p>甲は、利用者に対し、本アプリを非営利かつ教育目的の範囲内で利用する非独占的な権利を許諾します。</p>
+
+                <h3>第4条（禁止事項）</h3>
+                <p>利用者は、以下の行為を行ってはなりません。</p>
+                <ol>
+                    <li>甲の許可なく、本アプリまたはその内容を第三者に提供、公開、配布する行為</li>
+                    <li>甲の許可なく、本アプリを営利目的で利用する行為</li>
+                    <li>本アプリの全部または一部を改変、複製、再配布する行為</li>
+                    <li>本アプリを利用して第三者の権利を侵害する行為</li>
+                    <li>法令または公序良俗に反する行為</li>
+                    <li>その他、甲が不適切と判断する行為</li>
+                </ol>
+
+                <h3>第5条（免責事項）</h3>
+                <ol>
+                    <li>本アプリの利用に関連して利用者または第三者に生じたいかなる損害についても、甲は一切の責任を負いません。</li>
+                    <li>利用者が本アプリを利用して行った行為およびその結果については、すべて利用者の責任とします。</li>
+                    <li>利用者間または利用者と第三者との間で生じた紛争について、甲は一切関与せず責任を負いません。</li>
+                </ol>
+
+                <h3>第6条（規約違反）</h3>
+                <p>利用者が本規約に違反した場合、甲は当該利用者の利用を制限または停止できるものとします。</p>
+
+                <h3>第7条（規約の変更）</h3>
+                <p>甲は、必要に応じて本規約を変更することができるものとします。</p>
+            </div>
+            <div id="tos-footer">
+                <button id="tos-agree-btn" onclick="agreeTos()">同意してはじめる</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game_app"></div>
+
+    <!-- QRコードオーバーレイ -->
+    <div id="qr-overlay">
+        <div id="qr-box">
+            <div id="qr-title">📱 間取りをスマホに送る</div>
+            <div id="qr-desc">QRコードをスマートフォンのカメラで読み取ると<br>間取り画像が表示されます</div>
+            <div id="qr-code">
+                <div id="qr-loading">QRコードを生成中...</div>
+            </div>
+            <button id="qr-close-btn" onclick="closeQR()">閉じる</button>
+        </div>
+    </div>
+
+    <script>
+        var overlay = document.getElementById('tos-overlay');
+
+        // オーバーレイ上のクリック・タッチをすべて止める（背後のPhaserに届かないようにする）
+        overlay.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        overlay.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+        });
+        overlay.addEventListener('mouseup', function(e) {
+            e.stopPropagation();
+        });
+        overlay.addEventListener('touchstart', function(e) {
+            e.stopPropagation();
+        }, { passive: false });
+        overlay.addEventListener('touchend', function(e) {
+            e.stopPropagation();
+        }, { passive: false });
+        overlay.addEventListener('pointerdown', function(e) {
+            e.stopPropagation();
+        });
+        overlay.addEventListener('pointerup', function(e) {
+            e.stopPropagation();
+        });
+
+        function agreeTos() {
+            overlay.style.transition = 'opacity 0.3s';
+            overlay.style.opacity = '0';
+            setTimeout(function() {
+                overlay.style.display = 'none';
+            }, 300);
+        }
+    </script>
+
+    <script>
+    /* ===== QRコード生成機能 ===== */
+
+    var _qrButtonInjected = false;
+    var _currentMainScene = null;
+
+    var QR_GAME_X = 1384;
+    var QR_GAME_Y = 50;
+
+    function updateQrBtnPos() {
+        var canvas = document.querySelector('#game_app canvas');
+        if (!canvas) return;
+        var cr = canvas.getBoundingClientRect();
+        if (!cr.width) return;
+
+        var scaleX = cr.width  / 1920;
+        var scaleY = cr.height / 1080;
+
+        var btnH = 72  * scaleY;
+        var btnW = 149 * (btnH / 61);
+        var left = cr.left + QR_GAME_X * scaleX - btnW / 2;
+        var top  = cr.top  + QR_GAME_Y * scaleY - btnH / 2;
+
+        var btn = document.getElementById('qr-game-btn');
+        if (!btn) return;
+        btn.style.left   = left + 'px';
+        btn.style.top    = top  + 'px';
+        btn.style.width  = btnW + 'px';
+        btn.style.height = btnH + 'px';
+    }
+    window.addEventListener('resize', updateQrBtnPos);
+
+    // game_appには手を加えずbody直下にfixedで配置
+    // z-index:99999でPhaserのDOMコンテナより確実に上に表示
+    (function() {
+        var btn = document.createElement('div');
+        btn.id = 'qr-game-btn';
+        btn.style.cssText = [
+            'position:fixed',
+            'cursor:pointer',
+            'z-index:99999',
+            'display:none',
+            'pointer-events:auto',
+            'background-size:100% 100%',
+            'background-repeat:no-repeat',
+            'background-image:url("data:image/png;base64,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")' ,
+        ].join(';');
+        btn.addEventListener('pointerover', function() { this.style.opacity='0.8'; });
+        btn.addEventListener('pointerout',  function() { this.style.opacity='1'; });
+        btn.addEventListener('pointerup',   function() {
+            if (_currentMainScene) generateQR(_currentMainScene);
+        });
+        document.body.appendChild(btn);
+
+        // Phaserのcanvasとそのstacking contextを下に設定してボタンを前面に出す
+        // game_appには一切手を加えない（タッチ座標を壊さないため）
+        var _zIndexTimer = setInterval(function() {
+            var canvas = document.querySelector('#game_app canvas');
+            if (!canvas) return;
+            clearInterval(_zIndexTimer);
+            // canvasのz-indexを明示的に設定
+            canvas.style.zIndex = '1';
+            // Phaserが生成するDOMコンテナ（inputテキスト等）をcanvasより上に
+            var domContainer = document.querySelector('#game_app div');
+            if (domContainer) domContainer.style.zIndex = '2';
+        }, 100);
+    })();
+
+    // setIntervalはdisplay制御のみ担当（visible_flag / scene_changeing監視）
+    setInterval(function() {
+        var game = window._phaserGame;
+        if (!game || !game.scene) return;
+
+        var scenes = game.scene.scenes;
+        var mainScene = null;
+        for (var i = 0; i < scenes.length; i++) {
+            if (scenes[i].sys && scenes[i].sys.settings &&
+                scenes[i].sys.settings.key === 'MainScene' &&
+                scenes[i].sys.settings.active) {
+                mainScene = scenes[i]; break;
+            }
+        }
+
+        var btn = document.getElementById('qr-game-btn');
+        if (!btn) return;
+
+        if (!mainScene) {
+            btn.style.display = 'none';
+            _qrButtonInjected = false;
+            _currentMainScene = null;
+            return;
+        }
+
+        _currentMainScene = mainScene;
+
+        if (!_qrButtonInjected) {
+            _qrButtonInjected = true;
+        }
+
+        var shouldShow = mainScene.visible_flag && !mainScene.scene_changeing;
+        btn.style.display = shouldShow ? 'block' : 'none';
+
+    }, 16);
+
+    // RAFは位置・サイズ更新のみ担当（描画と完全同期）
+    function _qrRafLoop() {
+        updateQrBtnPos();
+        requestAnimationFrame(_qrRafLoop);
+    }
+    requestAnimationFrame(_qrRafLoop);
+
+        // QRコード生成処理
+    function generateQR(scene) {
+        var overlay = document.getElementById('qr-overlay');
+        var qrContainer = document.getElementById('qr-code');
+
+        // オーバーレイを表示（ローディング状態）
+        qrContainer.innerHTML = '<div id="qr-loading">QRコードを生成中...</div>';
+        overlay.classList.add('visible');
+
+        // グリッドを非表示にしてからスクショ（snapshot_downloadと同じ処理）
+        scene.edit_grid.forEach(function(g) { g.visible = false; });
+
+        scene.renderer.snapshotArea(
+            scene.stage_base.x - scene.stage_base.width * 0.5,
+            scene.stage_base.y - scene.stage_base.height * 0.5,
+            scene.stage_base.width,
+            scene.stage_base.height,
+            function(imageElement) {
+                // グリッドを元に戻す
+                scene.edit_grid.forEach(function(g) { g.visible = true; });
+
+                // base64データからヘッダー部分を除去
+                var base64 = imageElement.src.replace(/^data:image\/png;base64,/, '');
+
+                // ImgBB APIに画像をアップロード（1時間で自動削除）
+                var formData = new FormData();
+                formData.append('key', '4e877cfcc93adfe58b4c93d09a600cbc');
+                formData.append('image', base64);
+                formData.append('expiration', '3600'); // 1時間で自動削除
+
+                fetch('https://api.imgbb.com/1/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (!data.success) throw new Error('アップロード失敗');
+
+                    var imageUrl = data.data.url;
+
+                    // 短いURLをQRコード化
+                    qrContainer.innerHTML = '';
+                    new QRCode(qrContainer, {
+                        text: imageUrl,
+                        width: 256,
+                        height: 256,
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                })
+                .catch(function(e) {
+                    qrContainer.innerHTML =
+                        '<div style="padding:16px;text-align:center;font-family:Meiryo,sans-serif;' +
+                        'color:#c00;font-size:13px;">' +
+                        'QRコードの生成に失敗しました。<br>' +
+                        'ネットワーク接続を確認してください。</div>';
+                });
+            }
+        );
+    }
+
+    function closeQR() {
+        document.getElementById('qr-overlay').classList.remove('visible');
+    }
+
+    // QRオーバーレイ上のホイール操作でゲームがズームしないよう制御
+    document.getElementById('qr-overlay').addEventListener('wheel', function(e) {
+        e.stopPropagation();
+    }, { passive: false });
+    </script>
+
+
+<script>
+(function(){
+    var MIN_ZM=1.0, MAX_ZM=2.0;
+    var zm=1.0, txPx=0, tyPx=0;
+    var cv=null, r0={left:0,top:0}, w0=0, h0=0, ready=false;
+
+    /* canvasを検出してセットアップ */
+    var _t=setInterval(function(){
+        var c=document.querySelector('#game_app canvas');
+        if(!c) return;
+        cv=c; clearInterval(_t);
+        setTimeout(function(){ _saveR0(); ready=true; }, 800);
+        _attachEvents();
+        requestAnimationFrame(_loop);
+    }, 100);
+
+    /* 毎フレーム: ScaleManager抑制・テキスト非表示管理 */
+    function _loop(){
+        requestAnimationFrame(_loop);
+        if(!cv||!window._phaserGame||!ready) return;
+        var sc=window._phaserGame.scale;
+        if(!sc) return;
+        sc.resizeInterval=999999999; /* 自動リフレッシュを抑制 */
+        _syncInput();
+    }
+
+    /* 拡大時はテキスト入力欄・ラベルを非表示 */
+    var _prevHide=false;
+    function _syncInput(){
+        var g=window._phaserGame; if(!g) return;
+        var ss=g.scene&&g.scene.scenes; if(!ss) return;
+        var hide=(zm>1.0001);
+        if(hide===_prevHide) return;
+        _prevHide=hide;
+        for(var i=0;i<ss.length;i++){
+            var s=ss[i];
+            if(s.input_text) s.input_text.forEach(function(o){
+                if(o&&o.setVisible) o.setVisible(!hide);
+            });
+            if(s.ui_text) s.ui_text.forEach(function(o){
+                if(o&&o.setVisible) o.setVisible(!hide);
+            });
+        }
+    }
+
+    /* canvas初期位置・サイズを記録（transform=noneの状態で呼ぶ） */
+    function _saveR0(){
+        if(!cv) return;
+        cv.style.transform='';
+        cv.style.transformOrigin='';
+        var r=cv.getBoundingClientRect();
+        r0.left=r.left; r0.top=r.top;
+        w0=cv.offsetWidth||w0;
+        h0=cv.offsetHeight||h0;
+    }
+
+    /* パン量をクランプ（四隅まで移動できる範囲） */
+    function _clamp(){
+        if(zm<=1.0001){ txPx=0; tyPx=0; return; }
+        txPx=Math.max(w0*(1-zm), Math.min(0, txPx));
+        tyPx=Math.max(h0*(1-zm), Math.min(0, tyPx));
+    }
+
+    /* CSS transform適用 + PhaserのcanvasBoundsを更新 */
+    function _apply(){
+        if(!cv) return;
+        if(zm<=1.0001){
+            cv.style.transform='';
+            cv.style.transformOrigin='';
+            var r=cv.getBoundingClientRect();
+            r0.left=r.left; r0.top=r.top;
+            w0=cv.offsetWidth||w0; h0=cv.offsetHeight||h0;
+        } else {
+            cv.style.transformOrigin='0 0';
+            cv.style.transform=
+                'translate('+txPx+'px,'+tyPx+'px) scale('+zm+')';
+        }
+        /* PhaserのcanvasBoundsをCSS transform後の値で更新 */
+        if(window._phaserGame){
+            var sc=window._phaserGame.scale;
+            if(sc&&sc.updateBounds){
+                sc.updateBounds();
+                /* displayScaleの上書きはズーム中のみ
+                   ズーム1.0時はPhaserのデフォルト値を使用
+                   （タブレットでJSONロード後の壁建具操作に影響するため） */
+                if(zm>1.0001){
+                    if(sc.displayScale&&sc.baseSize&&sc.canvasBounds.width>0){
+                        sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
+                        sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
+                    }
+                }
+            }
+        }
+    }
+
+    /* カーソル/タッチ位置を原点にズーム */
+    function _zoomAt(nz, cx, cy){
+        if(!ready) return;
+        nz=Math.min(MAX_ZM, Math.max(MIN_ZM, nz));
+        if(nz===zm) return;
+        /* カーソルのCSS座標（transform前） */
+        var gx=(cx-r0.left-txPx)/zm;
+        var gy=(cy-r0.top -tyPx)/zm;
+        /* ズーム後も同じCSS座標がカーソル下に来るよう調整 */
+        txPx=cx-r0.left-gx*nz;
+        tyPx=cy-r0.top -gy*nz;
+        zm=nz;
+        _clamp();
+        _apply();
+    }
+
+    function _attachEvents(){
+
+        /* リサイズ → zoom=1リセット */
+        window.addEventListener('resize', function(){
+            if(!cv||!ready) return;
+            zm=1.0; txPx=0; tyPx=0;
+            cv.style.transform='';
+            cv.style.transformOrigin='';
+            setTimeout(function(){
+                var r=cv.getBoundingClientRect();
+                r0.left=r.left; r0.top=r.top;
+                w0=cv.offsetWidth||w0; h0=cv.offsetHeight||h0;
+                _apply();
+            }, 300);
+        });
+
+        /* ホイールズーム（canvas上のみ） */
+        window.addEventListener('wheel', function(e){
+            if(!cv||!ready) return;
+            /* 利用規約オーバーレイ表示中はズーム無効 */
+            var ov=document.getElementById('tos-overlay');
+            if(ov&&ov.style.display!=='none') return;
+            var r=cv.getBoundingClientRect();
+            if(e.clientX<r.left||e.clientX>r.right||
+               e.clientY<r.top ||e.clientY>r.bottom) return;
+            e.preventDefault();
+            _zoomAt(zm+(e.deltaY<0?0.1:-0.1), e.clientX, e.clientY);
+        }, {passive:false});
+
+        /* ミドルボタンドラッグ = パン */
+        var pan={on:false,sx:0,sy:0,ox:0,oy:0};
+        window.addEventListener('mousedown', function(e){
+            if(e.button===1&&zm>1.0001){
+                e.preventDefault();
+                pan.on=true;
+                pan.sx=e.clientX; pan.sy=e.clientY;
+                pan.ox=txPx; pan.oy=tyPx;
+            }
+        }, true);
+        window.addEventListener('mouseup', function(e){
+            if(e.button===1) pan.on=false;
+        }, true);
+        window.addEventListener('mousemove', function(e){
+            if(!pan.on) return;
+            txPx=pan.ox+(e.clientX-pan.sx);
+            tyPx=pan.oy+(e.clientY-pan.sy);
+            _clamp(); _apply();
+        }, true);
+
+        /* 2本指ドラッグ + ピンチズーム */
+        var tc={ids:[],mx:0,my:0,d:0,on:false};
+        function _two(ts){
+            var r=[];
+            for(var i=0;i<ts.length;i++)
+                if(tc.ids.indexOf(ts[i].identifier)>=0) r.push(ts[i]);
+            return r.length>=2?r.slice(0,2):null;
+        }
+        window.addEventListener('touchstart', function(e){
+            if(!cv||!ready) return;
+            for(var i=0;i<e.changedTouches.length;i++){
+                var id=e.changedTouches[i].identifier;
+                if(tc.ids.indexOf(id)<0) tc.ids.push(id);
+            }
+            if(tc.ids.length>=2){
+                var p=_two(e.touches); if(!p) return;
+                var r=cv.getBoundingClientRect();
+                var mx=(p[0].clientX+p[1].clientX)/2;
+                var my=(p[0].clientY+p[1].clientY)/2;
+                if(mx<r.left||mx>r.right||my<r.top||my>r.bottom){
+                    tc.on=false; tc.ids=[]; return;
+                }
+                tc.on=true; tc.mx=mx; tc.my=my;
+                tc.d=Math.hypot(p[1].clientX-p[0].clientX,
+                                p[1].clientY-p[0].clientY)||1;
+                /* 2本指操作中はPhaserへのタッチをブロック */
+                cv.style.pointerEvents='none';
+            }
+        }, {passive:true});
+        window.addEventListener('touchmove', function(e){
+            if(!tc.on||!cv||!ready) return;
+            var p=_two(e.touches);
+            if(!p||p.length<2) return;
+            e.preventDefault();
+            var mx=(p[0].clientX+p[1].clientX)/2;
+            var my=(p[0].clientY+p[1].clientY)/2;
+            var d=Math.hypot(p[1].clientX-p[0].clientX,
+                             p[1].clientY-p[0].clientY)||1;
+            /* ピンチズーム（前フレームからの変化量） */
+            var nz=Math.min(MAX_ZM,Math.max(MIN_ZM,zm*d/tc.d));
+            if(nz!==zm){
+                var gx=(tc.mx-r0.left-txPx)/zm;
+                var gy=(tc.my-r0.top -tyPx)/zm;
+                txPx=tc.mx-r0.left-gx*nz;
+                tyPx=tc.my-r0.top -gy*nz;
+                zm=nz;
+            }
+            /* 2本指パン */
+            txPx+=(mx-tc.mx); tyPx+=(my-tc.my);
+            tc.mx=mx; tc.my=my; tc.d=d;
+            _clamp(); _apply();
+        }, {passive:false});
+        window.addEventListener('touchend', function(e){
+            for(var i=0;i<e.changedTouches.length;i++){
+                var id=e.changedTouches[i].identifier;
+                var idx=tc.ids.indexOf(id);
+                if(idx>=0) tc.ids.splice(idx,1);
+            }
+            if(tc.ids.length<2){
+                tc.on=false;
+                /* Phaserへのタッチを少し遅延して再開
+                   指を離した瞬間のパーツ選択を防ぐ */
+                (function(c){ setTimeout(function(){ if(c) c.style.pointerEvents='auto'; }, 300); })(cv);
+                if(e.touches.length>0)
+                    tc.ids=[e.touches[0].identifier];
+            }
+        }, {passive:true});
+        /* OSがタッチを横取りした時（アプリスイッチャー等）に状態を完全リセット */
+        window.addEventListener('touchcancel', function(e){
+            tc.on=false;
+            tc.ids=[];
+            if(cv) cv.style.pointerEvents='auto';
+        }, {passive:true});
+
+        /* アプリがフォアグラウンドに戻った時にcanvas基準位置を再計算
+           iPadOSのアプリスイッチャーで縮小→復帰した際の縮小表示を修正 */
+        function _resetOnForeground(){
+            if(!cv||!ready) return;
+            zm=1.0; txPx=0; tyPx=0;
+            cv.style.transform='';
+            cv.style.transformOrigin='';
+            /* 画面が完全に復帰するまで待ってからr0を再計算 */
+            setTimeout(function(){
+                _saveR0();
+                _apply();
+                /* PhaserのScaleManagerにリサイズを通知 */
+                if(window._phaserGame && window._phaserGame.scale){
+                    window._phaserGame.scale.refresh();
+                }
+            }, 300);
+        }
+        document.addEventListener('visibilitychange', function(){
+            if(document.visibilityState==='visible') _resetOnForeground();
+        });
+        window.addEventListener('pageshow', function(e){
+            if(e.persisted) _resetOnForeground();
+        });
+    }
+})();
+</script>
+</body>
+</html>
