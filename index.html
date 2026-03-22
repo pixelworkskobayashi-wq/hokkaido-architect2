@@ -693,6 +693,12 @@
                     tc.ids=[e.touches[0].identifier];
             }
         }, {passive:true});
+        /* OSがタッチを横取りした時（アプリスイッチャー等）に状態を完全リセット */
+        window.addEventListener('touchcancel', function(e){
+            tc.on=false;
+            tc.ids=[];
+            if(cv) cv.style.pointerEvents='auto';
+        }, {passive:true});
     }
 })();
 </script>
