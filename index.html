@@ -699,6 +699,30 @@
             tc.ids=[];
             if(cv) cv.style.pointerEvents='auto';
         }, {passive:true});
+
+        /* アプリがフォアグラウンドに戻った時にcanvas基準位置を再計算
+           iPadOSのアプリスイッチャーで縮小→復帰した際の縮小表示を修正 */
+        function _resetOnForeground(){
+            if(!cv||!ready) return;
+            zm=1.0; txPx=0; tyPx=0;
+            cv.style.transform='';
+            cv.style.transformOrigin='';
+            /* 画面が完全に復帰するまで待ってからr0を再計算 */
+            setTimeout(function(){
+                _saveR0();
+                _apply();
+                /* PhaserのScaleManagerにリサイズを通知 */
+                if(window._phaserGame && window._phaserGame.scale){
+                    window._phaserGame.scale.refresh();
+                }
+            }, 300);
+        }
+        document.addEventListener('visibilitychange', function(){
+            if(document.visibilityState==='visible') _resetOnForeground();
+        });
+        window.addEventListener('pageshow', function(e){
+            if(e.persisted) _resetOnForeground();
+        });
     }
 })();
 </script>
