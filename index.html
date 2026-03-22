@@ -299,24 +299,18 @@
     var QR_GAME_Y = 50;
 
     function updateQrBtnPos() {
-        var gameApp = document.getElementById('game_app');
-        var canvas  = document.querySelector('#game_app canvas');
-        if (!gameApp || !canvas) return;
-        var gr = gameApp.getBoundingClientRect();
+        var canvas = document.querySelector('#game_app canvas');
+        if (!canvas) return;
         var cr = canvas.getBoundingClientRect();
         if (!cr.width) return;
 
         var scaleX = cr.width  / 1920;
         var scaleY = cr.height / 1080;
 
-        // game_app内の相対座標で配置
-        var canvasLeft = cr.left - gr.left;
-        var canvasTop  = cr.top  - gr.top;
-
         var btnH = 72  * scaleY;
         var btnW = 149 * (btnH / 61);
-        var left = canvasLeft + QR_GAME_X * scaleX - btnW / 2;
-        var top  = canvasTop  + QR_GAME_Y * scaleY - btnH / 2;
+        var left = cr.left + QR_GAME_X * scaleX - btnW / 2;
+        var top  = cr.top  + QR_GAME_Y * scaleY - btnH / 2;
 
         var btn = document.getElementById('qr-game-btn');
         if (!btn) return;
@@ -327,16 +321,13 @@
     }
     window.addEventListener('resize', updateQrBtnPos);
 
-    // game_appをposition:relativeにしてabsolute配置の基準にする
-    (function waitGameApp() {
-        var ga = document.getElementById('game_app');
-        if (!ga) { setTimeout(waitGameApp, 50); return; }
-        ga.style.position = 'relative';
-
+    // game_appには手を加えずbody直下にfixedで配置
+    // z-index:99999でPhaserのDOMコンテナより確実に上に表示
+    (function() {
         var btn = document.createElement('div');
         btn.id = 'qr-game-btn';
         btn.style.cssText = [
-            'position:absolute',
+            'position:fixed',
             'cursor:pointer',
             'z-index:99999',
             'display:none',
@@ -350,7 +341,20 @@
         btn.addEventListener('pointerup',   function() {
             if (_currentMainScene) generateQR(_currentMainScene);
         });
-        ga.appendChild(btn);
+        document.body.appendChild(btn);
+
+        // Phaserのcanvasとそのstacking contextを下に設定してボタンを前面に出す
+        // game_appには一切手を加えない（タッチ座標を壊さないため）
+        var _zIndexTimer = setInterval(function() {
+            var canvas = document.querySelector('#game_app canvas');
+            if (!canvas) return;
+            clearInterval(_zIndexTimer);
+            // canvasのz-indexを明示的に設定
+            canvas.style.zIndex = '1';
+            // Phaserが生成するDOMコンテナ（inputテキスト等）をcanvasより上に
+            var domContainer = document.querySelector('#game_app div');
+            if (domContainer) domContainer.style.zIndex = '2';
+        }, 100);
     })();
 
     // setIntervalはdisplay制御のみ担当（visible_flag / scene_changeing監視）
