@@ -762,9 +762,6 @@
             setTimeout(function(){
                 _saveR0();
                 _apply();
-                if(window._phaserGame && window._phaserGame.scale){
-                    window._phaserGame.scale.refresh();
-                }
             }, 500);
         }
         document.addEventListener('visibilitychange', function(){
