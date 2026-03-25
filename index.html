@@ -802,17 +802,24 @@
                                 _filePickingTimer = setTimeout(function(){
                                     _filePicking = false;
                                     /* ファイルピッカー中にresizeが抑制されていたため、
-                                       Phaserのscale状態をクリーンに復帰する */
-                                    _saveR0();
-                                    _apply();
+                                       PhaserのresizeIntervalを一時解放してdisplayScaleを含む
+                                       全てのscale状態を強制リフレッシュする */
+                                    _resizeUnlockFrames = 10;
+                                    if(window._phaserGame && window._phaserGame.scale){
+                                        window._phaserGame.scale.resizeInterval = 0;
+                                    }
+                                    window.dispatchEvent(new Event('resize'));
                                 }, 1000);
                             });
                             /* キャンセル時（changeが来ない場合）は5秒後に自動解除 */
                             if(_filePickingTimer) clearTimeout(_filePickingTimer);
                             _filePickingTimer = setTimeout(function(){
                                 _filePicking = false;
-                                _saveR0();
-                                _apply();
+                                _resizeUnlockFrames = 10;
+                                if(window._phaserGame && window._phaserGame.scale){
+                                    window._phaserGame.scale.resizeInterval = 0;
+                                }
+                                window.dispatchEvent(new Event('resize'));
                             }, 5000);
                         }
                     }
