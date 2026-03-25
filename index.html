@@ -496,13 +496,14 @@
         if(!sc) return;
         sc.resizeInterval=999999999;
         if(zm>1.0001){
+            /* ズーム中のみdisplayScaleを維持 */
             if(sc.updateBounds) sc.updateBounds();
             if(sc.displayScale&&sc.baseSize&&sc.canvasBounds&&sc.canvasBounds.width>0){
                 sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
                 sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
             }
         } else if(_prevZm>1.0001){
-            if(sc.updateBounds) sc.updateBounds();
+            /* ズーム→等倍の瞬間のみ1回リセット */
             if(sc.displayScale&&sc.baseSize&&sc.canvasBounds&&sc.canvasBounds.width>0){
                 sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
                 sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
@@ -606,11 +607,9 @@
             cv.style.transform='';
             cv.style.transformOrigin='';
             setTimeout(function(){
-                var r=cv.getBoundingClientRect();
-                r0.left=r.left; r0.top=r.top;
-                w0=cv.offsetWidth||w0; h0=cv.offsetHeight||h0;
+                _saveR0();
                 _apply();
-            }, 500);
+            }, 300);
         });
 
         /* ホイールズーム（canvas上のみ） */
@@ -754,36 +753,16 @@
             if(cv) cv.style.pointerEvents='auto';
         }, {passive:true});
 
-        /* アプリがフォアグラウンドに戻った時にcanvasを正しいサイズに再フィット
-           iPadOSのアプリスイッチャーで縮小→復帰した際の縮小表示を修正 */
         function _resetOnForeground(){
             if(!cv||!ready) return;
-            /* ズームをリセット */
             zm=1.0; txPx=0; tyPx=0;
             cv.style.transform='';
             cv.style.transformOrigin='';
-            /* PhaserのFITモードに再フィットを強制する
-               複数回試行して確実に正しいサイズに戻す */
-            var _tries = 0;
-            var _forceRefit = function(){
-                _tries++;
-                if(!window._phaserGame || !window._phaserGame.scale) return;
-                var sc = window._phaserGame.scale;
-                /* PhaserのScaleManagerを直接リセット */
-                if(sc.updateScale) sc.updateScale();
-                if(sc.updateBounds) sc.updateBounds();
-                _saveR0();
-                _apply();
-                /* canvasが正しいサイズになっているか確認
-                   window.innerWidthに対してcanvasが小さすぎる場合は再試行 */
-                var cw = cv.getBoundingClientRect().width;
-                var vw = window.innerWidth;
-                if(cw < vw * 0.8 && _tries < 6){
-                    setTimeout(_forceRefit, 300);
-                }
-            };
-            /* 300ms・600ms・900ms・1200ms・1500ms・1800msの6回試行 */
-            setTimeout(_forceRefit, 300);
+            /* resizeイベントを発火してPhaserのFITモードに再計算させる
+               自前でupdateBounds/updateScale/saveR0は一切呼ばない */
+            setTimeout(function(){
+                window.dispatchEvent(new Event('resize'));
+            }, 500);
         }
         document.addEventListener('visibilitychange', function(){
             if(document.visibilityState==='visible'){
