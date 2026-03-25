@@ -501,17 +501,14 @@
                 sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
                 sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
             }
-            _prevZm=zm;
-        } else {
+        } else if(_prevZm>1.0001){
             if(sc.updateBounds) sc.updateBounds();
-            if(_prevZm>1.0001){
-                if(sc.displayScale&&sc.baseSize&&sc.canvasBounds&&sc.canvasBounds.width>0){
-                    sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
-                    sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
-                }
+            if(sc.displayScale&&sc.baseSize&&sc.canvasBounds&&sc.canvasBounds.width>0){
+                sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
+                sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
             }
-            _prevZm=zm;
         }
+        _prevZm=zm;
         _syncInput();
     }
 
