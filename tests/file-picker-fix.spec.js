@@ -110,7 +110,7 @@ test('[シナリオA] setViewportSize縮小→復帰+visible → 全シーンcan
     // 合計 800ms + バッファ = 1200ms
     await page.setViewportSize(NORMAL_VP);
     await fireVisibility(page, 'visible');
-    await page.waitForTimeout(1200);
+    await page.waitForTimeout(1500);
 
     const w1 = await canvasCssWidth(page);
     const ok = Math.abs(w1 - w0) <= w0 * 0.05;
@@ -202,7 +202,7 @@ test('[シナリオC] visibilitychange復帰後のpointer座標 ±10px以内', a
   await fireVisibility(page, 'hidden');
   await page.setViewportSize(NORMAL_VP);
   await fireVisibility(page, 'visible');
-  await page.waitForTimeout(1200);
+  await page.waitForTimeout(1500);
 
   // canvas 中央をタップ
   const ds = await page.evaluate(() => {
@@ -284,7 +284,7 @@ test('[シナリオD] _filePicking=true の時 visibilitychange でreset抑制',
   await fireVisibility(page, 'hidden');
   await page.waitForTimeout(50);
   await fireVisibility(page, 'visible');
-  await page.waitForTimeout(900);
+  await page.waitForTimeout(1500);
 
   const afterReset = await page.evaluate(() => {
     const sc = window._phaserGame.scale;

@@ -477,6 +477,10 @@
     var zm=1.0, txPx=0, tyPx=0;
     var cv=null, r0={left:0,top:0}, w0=0, h0=0, ready=false;
     var _prevZm=1.0;
+    /* バックグラウンド復帰時のviewportポーリング制御 */
+    var _isRestoring=false;
+    var _restoreGen=0;
+    var _savedViewport=null;
 
     /* canvasを検出してセットアップ */
     var _t=setInterval(function(){
@@ -489,12 +493,20 @@
     }, 100);
 
     /* 毎フレーム: ScaleManager抑制・テキスト非表示管理 */
+    var _resizeUnlockFrames=0;
     function _loop(){
         requestAnimationFrame(_loop);
         if(!cv||!window._phaserGame||!ready) return;
         var sc=window._phaserGame.scale;
         if(!sc) return;
-        sc.resizeInterval=999999999;
+        /* 復帰ポーリング中 または resizeUnlock中はPhaserのリサイズを許可 */
+        if(_isRestoring){
+            /* 復帰中はresizeIntervalを制限しない */
+        } else if(_resizeUnlockFrames>0){
+            _resizeUnlockFrames--;
+        } else {
+            sc.resizeInterval=999999999;
+        }
         if(zm>1.0001){
             /* ズーム中のみdisplayScaleを維持 */
             if(sc.updateBounds) sc.updateBounds();
@@ -600,9 +612,10 @@
 
     function _attachEvents(){
 
-        /* リサイズ → zoom=1リセット */
+        /* リサイズ → zoom=1リセット（復帰ポーリング中はスキップ） */
         window.addEventListener('resize', function(){
             if(!cv||!ready) return;
+            if(_isRestoring) return;
             zm=1.0; txPx=0; tyPx=0;
             cv.style.transform='';
             cv.style.transformOrigin='';
@@ -753,26 +766,73 @@
             if(cv) cv.style.pointerEvents='auto';
         }, {passive:true});
 
-        function _resetOnForeground(){
-            if(!cv||!ready) return;
-            zm=1.0; txPx=0; tyPx=0;
-            cv.style.transform='';
-            cv.style.transformOrigin='';
-            /* resizeイベントを発火してPhaserのFITモードに再計算させる
-               自前でupdateBounds/updateScale/saveR0は一切呼ばない */
-            setTimeout(function(){
-                window.dispatchEvent(new Event('resize'));
-            }, 500);
-        }
+        /* ===== バックグラウンド復帰処理 =====
+           iOSの4〜5本指操作でviewportが縮小アニメーションされ、
+           復帰時にviewportが完全に復元されるまでのタイミングが不定。
+           固定遅延ではなくviewportサイズのポーリングで待機する。 */
+
+        /* hidden時にviewport寸法を記録 */
         document.addEventListener('visibilitychange', function(){
-            if(document.visibilityState==='visible'){
+            if(document.visibilityState==='hidden'){
+                _savedViewport={w:window.innerWidth,h:window.innerHeight};
+            } else if(document.visibilityState==='visible'){
                 if(_filePicking) return;
-                _resetOnForeground();
+                _restoreAfterBackground();
             }
         });
         window.addEventListener('pageshow', function(e){
-            if(e.persisted) _resetOnForeground();
+            if(e.persisted) _restoreAfterBackground();
         });
+
+        function _restoreAfterBackground(){
+            if(!cv||!ready) return;
+            /* 復帰開始: ズームとtransformを即座にクリア */
+            _isRestoring=true;
+            _restoreGen++;
+            var gen=_restoreGen;
+
+            zm=1.0; txPx=0; tyPx=0;
+            cv.style.transform='';
+            cv.style.transformOrigin='';
+
+            var saved=_savedViewport;
+            var attempts=0;
+            /* 最大3秒(30×100ms)待機。それでも復元しなければ現在値で進む */
+            var maxAttempts=30;
+
+            function _poll(){
+                /* 新しい復帰呼び出しで上書きされた場合は旧ポーリングを停止 */
+                if(gen!==_restoreGen) return;
+                attempts++;
+
+                var curW=window.innerWidth;
+                var curH=window.innerHeight;
+
+                /* viewportが保存値に近づいたか判定（5%許容）
+                   saved が無い場合（初回起動時等）は即座に復元扱い */
+                var restored=!saved||
+                    (Math.abs(curW-saved.w)/Math.max(saved.w,1)<0.05 &&
+                     Math.abs(curH-saved.h)/Math.max(saved.h,1)<0.05);
+
+                if(restored||attempts>=maxAttempts){
+                    /* viewportが復元（またはタイムアウト）→ 安全にresize実行 */
+                    _isRestoring=false;
+                    _savedViewport=null;
+                    /* PhaserのresizeIntervalを一時的に解放してFITモード再計算
+                       数フレーム分はPhaserに完全委譲する */
+                    _resizeUnlockFrames=10;
+                    if(window._phaserGame&&window._phaserGame.scale){
+                        window._phaserGame.scale.resizeInterval=0;
+                    }
+                    window.dispatchEvent(new Event('resize'));
+                } else {
+                    /* まだ縮小中 → 100ms後に再チェック */
+                    setTimeout(_poll, 100);
+                }
+            }
+            /* 200ms後からポーリング開始（直後は確実に縮小中のため） */
+            setTimeout(_poll, 200);
+        }
     }
 })();
 </script>
