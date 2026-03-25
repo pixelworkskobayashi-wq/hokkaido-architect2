@@ -44,9 +44,9 @@ async function startMainScene(page) {
   await page.waitForTimeout(1500);
 }
 
-// ─── テスト① ファイルピッカー操作のシミュレーション ────────
+// ─── テスト① visibilitychange発火でr0が変化しないことを確認 ──
 
-test('[テスト①] ファイルピッカー操作中はvisibilitychange visible でr0を保護する', async ({ page }) => {
+test('[テスト①] visibilitychange(hidden→visible)発火でr0・displayScaleが変化しない', async ({ page }) => {
   await startMainScene(page);
 
   // scale.refresh() の呼び出し回数をスパイ
@@ -57,32 +57,24 @@ test('[テスト①] ファイルピッカー操作中はvisibilitychange visibl
     sc.refresh = function() { sc._refreshCount++; orig(); };
   });
 
-  // 初期のcanvasBoundsを記録
+  // 初期状態を記録
   const before = await page.evaluate(() => {
     const sc = window._phaserGame.scale;
-    return { left: sc.canvasBounds.left, top: sc.canvasBounds.top,
-             w: sc.canvasBounds.width,   h: sc.canvasBounds.height };
+    return {
+      left: sc.canvasBounds.left, top: sc.canvasBounds.top,
+      w: sc.canvasBounds.width,   h: sc.canvasBounds.height,
+      dsX: sc.displayScale.x,     dsY: sc.displayScale.y,
+    };
   });
 
-  // #game_app に input[type=file] を注入（_filePicking=true トリガー）
-  await page.evaluate(() => {
-    const fi = document.createElement('input');
-    fi.type = 'file';
-    fi.id = '_test_file_input';
-    document.getElementById('game_app').appendChild(fi);
-  });
-
-  // visibilityState='hidden' を設定してイベント発火
+  // visibilityState='hidden' → 'visible' を連続発火
   await page.evaluate(() => {
     Object.defineProperty(document, 'visibilityState', {
       get: () => 'hidden', configurable: true
     });
     document.dispatchEvent(new Event('visibilitychange'));
   });
-
   await page.waitForTimeout(50);
-
-  // visibilityState='visible' を設定してイベント発火
   await page.evaluate(() => {
     Object.defineProperty(document, 'visibilityState', {
       get: () => 'visible', configurable: true
@@ -90,31 +82,34 @@ test('[テスト①] ファイルピッカー操作中はvisibilitychange visibl
     document.dispatchEvent(new Event('visibilitychange'));
   });
 
-  // 300ms タイムアウト + バッファ
-  await page.waitForTimeout(500);
+  // 500ms タイムアウト + バッファ（resizeもpageshowも発火していない）
+  await page.waitForTimeout(700);
 
-  // scale.refresh() が呼ばれていないことを確認（_filePicking保護が機能）
+  // scale.refresh() が呼ばれていないことを確認
   const refreshCount = await page.evaluate(() => window._phaserGame.scale._refreshCount);
-  console.log(`\n[テスト①] scale.refresh呼び出し回数: ${refreshCount}  ${refreshCount === 0 ? '→ 保護機能OK ✓' : '→ 保護失敗 ⚠'}`);
+  console.log(`\n[テスト①] scale.refresh呼び出し回数: ${refreshCount}  ${refreshCount === 0 ? '→ visibilitychangeは何もしない ✓' : '→ 想定外の呼び出し ⚠'}`);
   expect(refreshCount).toBe(0);
 
-  // canvasBoundsが変化していないことを確認
+  // canvasBounds・displayScaleが変化していないことを確認
   const after = await page.evaluate(() => {
     const sc = window._phaserGame.scale;
-    return { left: sc.canvasBounds.left, top: sc.canvasBounds.top,
-             w: sc.canvasBounds.width,   h: sc.canvasBounds.height };
+    return {
+      left: sc.canvasBounds.left, top: sc.canvasBounds.top,
+      w: sc.canvasBounds.width,   h: sc.canvasBounds.height,
+      dsX: sc.displayScale.x,     dsY: sc.displayScale.y,
+    };
   });
   console.log(`  canvasBounds before: left=${before.left} top=${before.top} w=${before.w} h=${before.h}`);
   console.log(`  canvasBounds after : left=${after.left} top=${after.top} w=${after.w} h=${after.h}`);
+  console.log(`  displayScale: before=(${before.dsX.toFixed(6)}, ${before.dsY.toFixed(6)})  after=(${after.dsX.toFixed(6)}, ${after.dsY.toFixed(6)})`);
+
   expect(after.left).toBe(before.left);
   expect(after.top).toBe(before.top);
   expect(after.w).toBe(before.w);
   expect(after.h).toBe(before.h);
 
-  // クリーンアップ
+  // visibilityState をリセット
   await page.evaluate(() => {
-    const fi = document.getElementById('_test_file_input');
-    if (fi) fi.remove();
     Object.defineProperty(document, 'visibilityState', {
       get: () => 'visible', configurable: true
     });

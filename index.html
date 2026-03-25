@@ -610,7 +610,7 @@
                 r0.left=r.left; r0.top=r.top;
                 w0=cv.offsetWidth||w0; h0=cv.offsetHeight||h0;
                 _apply();
-            }, 300);
+            }, 500);
         });
 
         /* ホイールズーム（canvas上のみ） */
@@ -645,9 +645,6 @@
             tyPx=pan.oy+(e.clientY-pan.sy);
             _clamp(); _apply();
         }, true);
-
-        /* ファイルピッカー操作中フラグ（iOS visibilitychange誤作動防止） */
-        var _filePicking=false;
 
         /* 2本指ドラッグ + ピンチズーム */
         var tc={ids:[],mx:0,my:0,d:0,on:false};
@@ -723,38 +720,22 @@
             if(cv) cv.style.pointerEvents='auto';
         }, {passive:true});
 
-        /* アプリがフォアグラウンドに戻った時にcanvas基準位置を再計算
-           iPadOSのアプリスイッチャーで縮小→復帰した際の縮小表示を修正 */
-        function _resetOnForeground(){
+        /* アプリスイッチャー復帰時の縮小表示を修正
+           visibilitychange→resizeが発火するのでresizeハンドラに任せる
+           ただしresizeが発火しない場合のフォールバックとしてpageshowのみ残す */
+        window.addEventListener('pageshow', function(e){
+            if(!e.persisted) return;
             if(!cv||!ready) return;
-            /* ファイルピッカー操作中はr0の再計算を抑制 */
-            if(_filePicking){ _filePicking=false; return; }
             zm=1.0; txPx=0; tyPx=0;
             cv.style.transform='';
             cv.style.transformOrigin='';
-            /* 画面が完全に復帰するまで待ってからr0を再計算 */
             setTimeout(function(){
                 _saveR0();
                 _apply();
                 if(window._phaserGame && window._phaserGame.scale){
                     window._phaserGame.scale.refresh();
                 }
-            }, 300);
-        }
-        document.addEventListener('visibilitychange', function(){
-            if(document.visibilityState==='hidden'){
-                /* hiddenになった原因がファイルピッカーか判定 */
-                /* input[type=file]がfocusを持っている場合はファイルピッカー */
-                var fi=document.querySelector('input[type=file]');
-                if(fi && document.activeElement===fi) _filePicking=true;
-                /* Phaserが生成するfile inputも対象 */
-                var pfi=document.querySelector('#game_app input[type=file]');
-                if(pfi) _filePicking=true;
-            }
-            if(document.visibilityState==='visible') _resetOnForeground();
-        });
-        window.addEventListener('pageshow', function(e){
-            if(e.persisted) _resetOnForeground();
+            }, 500);
         });
     }
 })();
