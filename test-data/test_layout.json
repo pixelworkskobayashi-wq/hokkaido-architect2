@@ -1,0 +1,52 @@
+{
+	"data_version": 0,
+	"premises_index": 1,
+	"text_data": {
+		"date": "",
+		"work_name": "テスト用レイアウト",
+		"drawing_name": "平面図",
+		"school_name": "",
+		"grade_class": "",
+		"name": "test"
+	},
+	"parts_data": [
+		{
+			"parts_data": {
+				"x": 960,
+				"y": 540,
+				"frameKey": "Livingroom.png",
+				"rotation": 0
+			},
+			"walls_data": {
+				"using": true,
+				"width": 4,
+				"height": 2,
+				"map": [
+					[0, 0, 0, 0],
+					[0, 0],
+					[0, 0, 0, 0],
+					[0, 0]
+				]
+			}
+		},
+		{
+			"parts_data": {
+				"x": 1100,
+				"y": 680,
+				"frameKey": "Livingroom.png",
+				"rotation": 0
+			},
+			"walls_data": {
+				"using": true,
+				"width": 4,
+				"height": 2,
+				"map": [
+					[0, 0, 0, 0],
+					[0, 0],
+					[0, 0, 0, 0],
+					[0, 0]
+				]
+			}
+		}
+	]
+}

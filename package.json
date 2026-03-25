@@ -1,0 +1,28 @@
+{
+  "name": "hokkaido-architect2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "phaser.min.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:desktop": "playwright test --project=desktop-chromium --headed",
+    "test:ipad": "playwright test --project=ipad-pro --headed",
+    "test:report": "playwright show-report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixelworkskobayashi-wq/hokkaido-architect2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/pixelworkskobayashi-wq/hokkaido-architect2/issues"
+  },
+  "homepage": "https://github.com/pixelworkskobayashi-wq/hokkaido-architect2#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}
