@@ -489,6 +489,9 @@
     /* 正常時のviewportサイズ（resizeハンドラで異常縮小を検知するための基準値） */
     var _normalVpW=0;
     var _normalVpH=0;
+    /* ファイルピッカー操作中フラグ（IIFE直下に配置してresizeハンドラ・_checkVisualViewportからもアクセス可能にする） */
+    var _filePicking=false;
+    var _filePickingTimer=null;
 
     /* canvasを検出してセットアップ */
     var _t=setInterval(function(){
@@ -542,7 +545,7 @@
        を検知して強制リセットする。debounce付きで過剰な発火を防止 */
     var _vpFixCooldown=0;
     function _checkVisualViewport(){
-        if(_isRestoring) return;
+        if(_isRestoring||_filePicking) return;
         if(_vpFixCooldown>0){ _vpFixCooldown--; return; }
         var vv=window.visualViewport;
         if(!vv) return;
@@ -715,6 +718,7 @@
         window.addEventListener('resize', function(){
             if(!cv||!ready) return;
             if(_isRestoring) return;
+            if(_filePicking) return;
             zm=1.0; txPx=0; tyPx=0;
             cv.style.transform='';
             cv.style.transformOrigin='';
@@ -781,8 +785,6 @@
 
         /* MutationObserverでiOS ファイルピッカー操作を確実に検知
            Phaserが動的生成するinput[type=file]の出現・消滅を監視 */
-        var _filePicking = false;
-        var _filePickingTimer = null;
         var _mutationObs = new MutationObserver(function(mutations){
             for(var i=0; i<mutations.length; i++){
                 for(var j=0; j<mutations[i].addedNodes.length; j++){
@@ -799,12 +801,18 @@
                                 if(_filePickingTimer) clearTimeout(_filePickingTimer);
                                 _filePickingTimer = setTimeout(function(){
                                     _filePicking = false;
+                                    /* ファイルピッカー中にresizeが抑制されていたため、
+                                       Phaserのscale状態をクリーンに復帰する */
+                                    _saveR0();
+                                    _apply();
                                 }, 1000);
                             });
                             /* キャンセル時（changeが来ない場合）は5秒後に自動解除 */
                             if(_filePickingTimer) clearTimeout(_filePickingTimer);
                             _filePickingTimer = setTimeout(function(){
                                 _filePicking = false;
+                                _saveR0();
+                                _apply();
                             }, 5000);
                         }
                     }
