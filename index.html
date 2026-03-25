@@ -648,6 +648,40 @@
 
         /* 2本指ドラッグ + ピンチズーム */
         var tc={ids:[],mx:0,my:0,d:0,on:false};
+
+        /* MutationObserverでiOS ファイルピッカー操作を確実に検知
+           Phaserが動的生成するinput[type=file]の出現・消滅を監視 */
+        var _filePicking = false;
+        var _filePickingTimer = null;
+        var _mutationObs = new MutationObserver(function(mutations){
+            for(var i=0; i<mutations.length; i++){
+                for(var j=0; j<mutations[i].addedNodes.length; j++){
+                    var node = mutations[i].addedNodes[j];
+                    /* input[type=file]またはそれを含むlabelが追加された */
+                    if(node.nodeType===1){
+                        var inp = (node.tagName==='INPUT' && node.type==='file')
+                            ? node
+                            : node.querySelector && node.querySelector('input[type=file]');
+                        if(inp){
+                            _filePicking = true;
+                            /* changeイベント（ファイル選択完了）で解除 */
+                            inp.addEventListener('change', function(){
+                                if(_filePickingTimer) clearTimeout(_filePickingTimer);
+                                _filePickingTimer = setTimeout(function(){
+                                    _filePicking = false;
+                                }, 1000);
+                            });
+                            /* キャンセル時（changeが来ない場合）は5秒後に自動解除 */
+                            if(_filePickingTimer) clearTimeout(_filePickingTimer);
+                            _filePickingTimer = setTimeout(function(){
+                                _filePicking = false;
+                            }, 5000);
+                        }
+                    }
+                }
+            }
+        });
+        _mutationObs.observe(document.body, {childList:true, subtree:true});
         function _two(ts){
             var r=[];
             for(var i=0;i<ts.length;i++)
@@ -720,11 +754,7 @@
             if(cv) cv.style.pointerEvents='auto';
         }, {passive:true});
 
-        /* アプリスイッチャー復帰時の縮小表示を修正
-           visibilitychange→resizeが発火するのでresizeハンドラに任せる
-           ただしresizeが発火しない場合のフォールバックとしてpageshowのみ残す */
-        window.addEventListener('pageshow', function(e){
-            if(!e.persisted) return;
+        function _resetOnForeground(){
             if(!cv||!ready) return;
             zm=1.0; txPx=0; tyPx=0;
             cv.style.transform='';
@@ -736,6 +766,16 @@
                     window._phaserGame.scale.refresh();
                 }
             }, 500);
+        }
+        document.addEventListener('visibilitychange', function(){
+            if(document.visibilityState==='visible'){
+                /* ファイルピッカー操作中はr0リセットを抑制 */
+                if(_filePicking) return;
+                _resetOnForeground();
+            }
+        });
+        window.addEventListener('pageshow', function(e){
+            if(e.persisted) _resetOnForeground();
         });
     }
 })();
