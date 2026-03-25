@@ -494,6 +494,14 @@
         var sc=window._phaserGame.scale;
         if(!sc) return;
         sc.resizeInterval=999999999; /* 自動リフレッシュを抑制 */
+        /* ズーム中はPhaserが内部でdisplayScaleをリセットするため毎フレーム維持 */
+        if(zm>1.0001){
+            if(sc.updateBounds) sc.updateBounds();
+            if(sc.displayScale&&sc.baseSize&&sc.canvasBounds&&sc.canvasBounds.width>0){
+                sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
+                sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
+            }
+        }
         _syncInput();
     }
 
