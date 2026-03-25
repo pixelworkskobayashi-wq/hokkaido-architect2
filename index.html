@@ -754,32 +754,39 @@
             if(cv) cv.style.pointerEvents='auto';
         }, {passive:true});
 
+        /* アプリがフォアグラウンドに戻った時にcanvasを正しいサイズに再フィット
+           iPadOSのアプリスイッチャーで縮小→復帰した際の縮小表示を修正 */
         function _resetOnForeground(){
             if(!cv||!ready) return;
             /* ズームをリセット */
             zm=1.0; txPx=0; tyPx=0;
             cv.style.transform='';
             cv.style.transformOrigin='';
-            /* viewportが元のサイズに戻るまで待ってからresizeを発火
-               PhaserのFITモードが正しいサイズで再計算される */
-            var _normalW = screen.width > screen.height ? screen.width : screen.height;
-            var _attempts = 0;
-            var _waitViewport = function(){
-                _attempts++;
+            /* PhaserのFITモードに再フィットを強制する
+               複数回試行して確実に正しいサイズに戻す */
+            var _tries = 0;
+            var _forceRefit = function(){
+                _tries++;
+                if(!window._phaserGame || !window._phaserGame.scale) return;
+                var sc = window._phaserGame.scale;
+                /* PhaserのScaleManagerを直接リセット */
+                if(sc.updateScale) sc.updateScale();
+                if(sc.updateBounds) sc.updateBounds();
+                _saveR0();
+                _apply();
+                /* canvasが正しいサイズになっているか確認
+                   window.innerWidthに対してcanvasが小さすぎる場合は再試行 */
+                var cw = cv.getBoundingClientRect().width;
                 var vw = window.innerWidth;
-                /* viewportが画面の80%以上に戻ったか、または2秒経過 */
-                if(vw >= _normalW * 0.8 || _attempts >= 8){
-                    /* resizeイベントでPhaserに再フィットを指示 */
-                    window.dispatchEvent(new Event('resize'));
-                } else {
-                    setTimeout(_waitViewport, 250);
+                if(cw < vw * 0.8 && _tries < 6){
+                    setTimeout(_forceRefit, 300);
                 }
             };
-            setTimeout(_waitViewport, 300);
+            /* 300ms・600ms・900ms・1200ms・1500ms・1800msの6回試行 */
+            setTimeout(_forceRefit, 300);
         }
         document.addEventListener('visibilitychange', function(){
             if(document.visibilityState==='visible'){
-                /* ファイルピッカー操作中はr0リセットを抑制 */
                 if(_filePicking) return;
                 _resetOnForeground();
             }
