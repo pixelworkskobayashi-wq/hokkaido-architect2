@@ -756,13 +756,26 @@
 
         function _resetOnForeground(){
             if(!cv||!ready) return;
+            /* ズームをリセット */
             zm=1.0; txPx=0; tyPx=0;
             cv.style.transform='';
             cv.style.transformOrigin='';
-            setTimeout(function(){
-                _saveR0();
-                _apply();
-            }, 500);
+            /* viewportが元のサイズに戻るまで待ってからresizeを発火
+               PhaserのFITモードが正しいサイズで再計算される */
+            var _normalW = screen.width > screen.height ? screen.width : screen.height;
+            var _attempts = 0;
+            var _waitViewport = function(){
+                _attempts++;
+                var vw = window.innerWidth;
+                /* viewportが画面の80%以上に戻ったか、または2秒経過 */
+                if(vw >= _normalW * 0.8 || _attempts >= 8){
+                    /* resizeイベントでPhaserに再フィットを指示 */
+                    window.dispatchEvent(new Event('resize'));
+                } else {
+                    setTimeout(_waitViewport, 250);
+                }
+            };
+            setTimeout(_waitViewport, 300);
         }
         document.addEventListener('visibilitychange', function(){
             if(document.visibilityState==='visible'){

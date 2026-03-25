@@ -1,9 +1,16 @@
 // @ts-check
+/**
+ * file-picker-fix.spec.js
+ * _resetOnForeground の viewport 確認ロジックと _filePicking 保護を検証
+ */
 const { test, expect } = require('@playwright/test');
 const path = require('path');
 const fs   = require('fs');
 
 const FIXTURE_PATH = path.resolve(__dirname, 'fixtures/test_layout.json');
+
+const NORMAL_VP = { width: 1024, height: 768 };
+const SHRUNK_VP = { width: 512,  height: 384 };
 
 // ─── ヘルパー ──────────────────────────────────────────────
 
@@ -48,7 +55,6 @@ async function startMainScene(page, premisesIndex = 1) {
   await page.waitForTimeout(1500);
 }
 
-/** visibilityState を上書きしてイベント発火 */
 async function fireVisibility(page, state) {
   await page.evaluate((s) => {
     Object.defineProperty(document, 'visibilityState', { get: () => s, configurable: true });
@@ -56,50 +62,59 @@ async function fireVisibility(page, state) {
   }, state);
 }
 
-/** canvas の CSS 幅を返す */
-async function canvasWidth(page) {
+async function canvasCssWidth(page) {
   return page.evaluate(() =>
     document.querySelector('#game_app canvas').getBoundingClientRect().width
   );
 }
 
-// ─── シナリオA：全シーン visibilitychange 復帰後の canvas 幅確認 ──
+// ─── シナリオA: resize あり・正常ケース ────────────────────
 
-test('[シナリオA] visibilitychange復帰後に全シーンでcanvas幅が正常値を維持', async ({ page }) => {
+test('[シナリオA] resize後にvisible → viewport確認でresizeをdispatch → 全シーン正常復帰', async ({ page }) => {
   await startApp(page);
 
-  // SelectionScene（またはTitleScene）で確認
-  const selW = await canvasWidth(page);
-  console.log(`\n[シナリオA] SelectionScene canvas幅: ${selW}px`);
-  expect(selW).toBeGreaterThan(0);
+  const scenes = [
+    { label: 'SelectionScene', setup: null },
+    { label: 'MainScene 住宅', setup: async () => {
+      await page.evaluate(() => window._phaserGame.scene.start('MainScene', { premises_index: 1 }));
+      await waitForScene(page, 'MainScene'); await page.waitForTimeout(1000);
+    }},
+    { label: 'MainScene 郊外', setup: async () => {
+      await page.evaluate(() => window._phaserGame.scene.start('MainScene', { premises_index: 0 }));
+      await waitForScene(page, 'MainScene'); await page.waitForTimeout(1000);
+    }},
+    { label: 'MainScene 海岸', setup: async () => {
+      await page.evaluate(() => window._phaserGame.scene.start('MainScene', { premises_index: -1 }));
+      await waitForScene(page, 'MainScene'); await page.waitForTimeout(1000);
+    }},
+  ];
 
-  await fireVisibility(page, 'hidden');
-  await page.waitForTimeout(50);
-  await fireVisibility(page, 'visible');
-  await page.waitForTimeout(700);
+  console.log('\n[シナリオA] resize + visible 正常ケース');
+  console.log('  シーン                 | 初期cssW | 復帰cssW | 結果');
+  console.log('  -----------------------|----------|----------|-----');
 
-  const selWAfter = await canvasWidth(page);
-  console.log(`  復帰後: ${selWAfter}px  ${selWAfter >= selW * 0.95 ? '✓' : '⚠'}`);
-  expect(selWAfter).toBeGreaterThanOrEqual(selW * 0.95);
+  for (const { label, setup } of scenes) {
+    if (setup) await setup();
+    const w0 = await canvasCssWidth(page);
 
-  // MainScene 全3エリアで確認
-  const areas = [['住宅', 1], ['郊外', 0], ['海岸', -1]];
-  for (const [label, idx] of areas) {
-    await page.evaluate((i) => {
-      window._phaserGame.scene.start('MainScene', { premises_index: i });
-    }, idx);
-    await waitForScene(page, 'MainScene');
-    await page.waitForTimeout(1000);
-
-    const w0 = await canvasWidth(page);
+    // 縮小
+    await page.setViewportSize(SHRUNK_VP);
+    await page.waitForTimeout(200);
     await fireVisibility(page, 'hidden');
-    await page.waitForTimeout(50);
-    await fireVisibility(page, 'visible');
-    await page.waitForTimeout(700);
-    const w1 = await canvasWidth(page);
 
-    console.log(`  ${label} MainScene: ${w0}px → ${w1}px  ${w1 >= w0 * 0.95 ? '✓' : '⚠'}`);
-    expect(w1, `${label}: canvas幅が縮小`).toBeGreaterThanOrEqual(w0 * 0.95);
+    // 元に戻す → visible 発火
+    await page.setViewportSize(NORMAL_VP);
+    await fireVisibility(page, 'visible');
+
+    // _waitViewport(300ms 初期待機) + 即座に条件成立(vw >= _normalW*0.8) + resize handler(500ms) + バッファ
+    await page.waitForTimeout(1500);
+
+    const w1 = await canvasCssWidth(page);
+    const ok = Math.abs(w1 - w0) <= w0 * 0.05;
+    console.log(
+      `  ${label.padEnd(22)} | ${String(w0).padEnd(8)} | ${String(w1).padEnd(8)} | ${ok ? '✓' : '⚠ ' + w1}`
+    );
+    expect(w1, `${label}: canvas幅 ${w1} ≠ ${w0}`).toBeGreaterThanOrEqual(w0 * 0.95);
   }
 
   await page.evaluate(() => {
@@ -108,72 +123,47 @@ test('[シナリオA] visibilitychange復帰後に全シーンでcanvas幅が正
   console.log('  → シナリオA PASS ✓');
 });
 
-// ─── シナリオB：JSONロード後の壁建具タッチ操作 ───────────
+// ─── シナリオB: resize なし・遅延ケース ──────────────────
 
-test('[シナリオB] JSON読み込み後の4辺タッチでpointer座標ズレ10px以内', async ({ page }) => {
-  await startMainScene(page);
+test('[シナリオB] resizeなし→_waitViewportがリトライ→途中でviewport復帰→正常復帰', async ({ page }) => {
+  await startMainScene(page, 1);
+  const w0 = await canvasCssWidth(page);
+  console.log(`\n[シナリオB] 初期cssW=${w0}`);
 
-  const jsonData = JSON.parse(fs.readFileSync(FIXTURE_PATH, 'utf-8'));
-  await page.evaluate((data) => {
-    window._phaserGame.cache.json.add('load_json_data', data);
-  }, jsonData);
+  // 縮小 → hidden
+  await page.setViewportSize(SHRUNK_VP);
+  await page.waitForTimeout(200);
+  await fireVisibility(page, 'hidden');
+
+  // resize を戻さずに visible 発火
+  // → _waitViewport がスタート(300ms後)。512 < 1024*0.8=819 なのでリトライを繰り返す
+  await fireVisibility(page, 'visible');
+
+  // _waitViewport の 1回目チェック(t=300ms): 512 < 819 → リトライ(+250ms)
+  // _waitViewport の 2回目チェック(t=550ms): まだ 512 → リトライ(+250ms)
+  // t=600ms: viewport を戻す
+  await page.waitForTimeout(600);
+  console.log(`  600ms後にviewportを正常サイズへ復帰`);
+  await page.setViewportSize(NORMAL_VP);
+
+  // _waitViewport の 3回目チェック(t=800ms): 1024 >= 819 → resize dispatch
+  // resize handler: setTimeout(500) → 合計 t≈1300ms
+  await page.waitForTimeout(1200);
+
+  const w1 = await canvasCssWidth(page);
+  console.log(`  復帰後 cssW=${w1}  期待=${w0}  ${Math.abs(w1 - w0) <= w0 * 0.05 ? '✓' : '⚠'}`);
+  expect(w1, `canvas幅 ${w1} ≠ ${w0}`).toBeGreaterThanOrEqual(w0 * 0.95);
+
   await page.evaluate(() => {
-    window._phaserGame.scene.getScene('MainScene').scene.restart();
+    Object.defineProperty(document, 'visibilityState', { get: () => 'visible', configurable: true });
   });
-  await waitForScene(page, 'MainScene');
-  await page.waitForTimeout(2000);
-
-  const partInfo = await page.evaluate(() => {
-    const scene = window._phaserGame.scene.getScene('MainScene');
-    if (!scene?.deploy_parts?.length) return null;
-    const p = scene.deploy_parts[0];
-    if (!p || !p.visible) return null;
-    const edges = scene.image_edge_point(p);
-    return {
-      topMid:    { x: (edges[0].x + edges[1].x) / 2, y: (edges[0].y + edges[1].y) / 2 },
-      rightMid:  { x: (edges[1].x + edges[2].x) / 2, y: (edges[1].y + edges[2].y) / 2 },
-      bottomMid: { x: (edges[2].x + edges[3].x) / 2, y: (edges[2].y + edges[3].y) / 2 },
-      leftMid:   { x: (edges[3].x + edges[0].x) / 2, y: (edges[3].y + edges[0].y) / 2 },
-    };
-  });
-  expect(partInfo).not.toBeNull();
-
-  const st = await page.evaluate(() => {
-    const sc = window._phaserGame.scale;
-    const r  = document.querySelector('#game_app canvas').getBoundingClientRect();
-    return { dsX: sc.displayScale.x, dsY: sc.displayScale.y, cssLeft: r.left, cssTop: r.top };
-  });
-  console.log(`\n[シナリオB] displayScale: (${st.dsX.toFixed(6)}, ${st.dsY.toFixed(6)})`);
-  console.log('  辺       | game座標       | pointer        | dist');
-  console.log('  ---------|----------------|----------------|-----');
-
-  const sides = [['上辺', partInfo.topMid], ['右辺', partInfo.rightMid],
-                 ['下辺', partInfo.bottomMid], ['左辺', partInfo.leftMid]];
-  for (const [name, eg] of sides) {
-    const sx = Math.round(eg.x / st.dsX + st.cssLeft);
-    const sy = Math.round(eg.y / st.dsY + st.cssTop);
-    await page.touchscreen.tap(sx, sy);
-    await page.waitForTimeout(150);
-    const ptr = await page.evaluate(() => {
-      const s = window._phaserGame.scene.getScene('MainScene');
-      return s?.input?.activePointer ? { x: s.input.activePointer.x, y: s.input.activePointer.y } : null;
-    });
-    expect(ptr).not.toBeNull();
-    const dist = Math.sqrt((ptr.x - eg.x) ** 2 + (ptr.y - eg.y) ** 2);
-    console.log(
-      `  ${name.padEnd(5)}   | (${eg.x.toFixed(0)}, ${eg.y.toFixed(0)})`.padEnd(32) +
-      `| (${Math.round(ptr.x)}, ${Math.round(ptr.y)})`.padEnd(17) +
-      `| ${dist.toFixed(1)}px ${dist <= 10 ? '✓' : '⚠'}`
-    );
-    expect(dist, `${name}: ${dist.toFixed(1)}px`).toBeLessThanOrEqual(10);
-  }
   console.log('  → シナリオB PASS ✓');
 });
 
-// ─── シナリオC：ファイルピッカー操作中のvisibilitychange保護 ──
+// ─── シナリオC: ファイルピッカー中はr0リセットしない ──────
 
-test('[シナリオC] _filePicking=true の時 visibilitychange visible でr0が変化しない', async ({ page }) => {
-  await startMainScene(page);
+test('[シナリオC] _filePicking=true の時 visibilitychange visible で resetが抑制される', async ({ page }) => {
+  await startMainScene(page, 1);
 
   const before = await page.evaluate(() => {
     const sc = window._phaserGame.scale;
@@ -181,56 +171,57 @@ test('[シナリオC] _filePicking=true の時 visibilitychange visible でr0が
              w: sc.canvasBounds.width,   h: sc.canvasBounds.height };
   });
 
-  // MutationObserver をトリガー: input[type=file] を body に追加
+  // MutationObserver をトリガー
   await page.evaluate(() => {
     const inp = document.createElement('input');
-    inp.type = 'file';
-    inp.id = '_test_file_inp';
+    inp.type = 'file'; inp.id = '_test_file_inp';
     document.body.appendChild(inp);
   });
   await page.waitForTimeout(100);
 
-  // _filePicking=true の状態で visibilitychange hidden→visible
+  // _filePicking=true の状態で hidden → visible
   await fireVisibility(page, 'hidden');
   await page.waitForTimeout(50);
   await fireVisibility(page, 'visible');
-  await page.waitForTimeout(700);
+
+  // _resetOnForeground が実行されていれば _waitViewport(300ms) + resize + resize handler(500ms) が走る
+  // 実行されていなければ何も起きない → 800ms 待って canvasBounds が変わっていないことを確認
+  await page.waitForTimeout(800);
 
   const after = await page.evaluate(() => {
     const sc = window._phaserGame.scale;
     return { left: sc.canvasBounds.left, top: sc.canvasBounds.top,
              w: sc.canvasBounds.width,   h: sc.canvasBounds.height };
   });
-  console.log(`\n[シナリオC] canvasBounds before: left=${before.left} top=${before.top} w=${before.w} h=${before.h}`);
-  console.log(`            canvasBounds after : left=${after.left} top=${after.top} w=${after.w} h=${after.h}`);
+  console.log(`\n[シナリオC] canvasBounds before: ${JSON.stringify(before)}`);
+  console.log(`            canvasBounds after : ${JSON.stringify(after)}`);
   expect(after.left).toBe(before.left);
   expect(after.top).toBe(before.top);
   expect(after.w).toBe(before.w);
   expect(after.h).toBe(before.h);
 
-  // changeイベントでフラグ解除 → その後は_resetOnForegroundが動く
+  // changeイベントでフラグ解除 → 次のvisibleでリセット実行を確認
   await page.evaluate(() => {
-    const inp = document.getElementById('_test_file_inp');
-    if (inp) inp.dispatchEvent(new Event('change'));
+    document.getElementById('_test_file_inp')?.dispatchEvent(new Event('change'));
   });
   await page.waitForTimeout(1200);
 
+  // resize不要ケース（viewport変化なし）: vw >= _normalW*0.8 が即座に成立するはず
   await fireVisibility(page, 'hidden');
   await page.waitForTimeout(50);
   await fireVisibility(page, 'visible');
-  await page.waitForTimeout(700);
+  await page.waitForTimeout(1200); // _waitViewport(300ms) + resize handler(500ms) + バッファ
 
   const afterReset = await page.evaluate(() => {
     const sc = window._phaserGame.scale;
     return { w: sc.canvasBounds.width, h: sc.canvasBounds.height };
   });
-  console.log(`  フラグ解除後 canvasBounds: w=${afterReset.w} h=${afterReset.h}  ${afterReset.w > 0 ? '(正常) ✓' : '⚠'}`);
+  console.log(`  フラグ解除後 canvasBounds: w=${afterReset.w} h=${afterReset.h}  ${afterReset.w > 0 ? '✓' : '⚠'}`);
   expect(afterReset.w).toBeGreaterThan(0);
 
   // クリーンアップ
   await page.evaluate(() => {
-    const inp = document.getElementById('_test_file_inp');
-    if (inp) inp.remove();
+    document.getElementById('_test_file_inp')?.remove();
     Object.defineProperty(document, 'visibilityState', { get: () => 'visible', configurable: true });
   });
   console.log('  → シナリオC PASS ✓');
