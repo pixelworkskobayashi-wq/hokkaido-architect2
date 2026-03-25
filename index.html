@@ -492,6 +492,9 @@
     /* ファイルピッカー操作中フラグ（IIFE直下に配置してresizeハンドラ・_checkVisualViewportからもアクセス可能にする） */
     var _filePicking=false;
     var _filePickingTimer=null;
+    /* ファイルピッカー中にPhaserのScaleManagerがdisplayScaleを壊すのを防ぐ
+       _filePicking=true時に保存し、_loop内で毎フレーム上書きして固定する */
+    var _savedDS=null;
 
     /* canvasを検出してセットアップ */
     var _t=setInterval(function(){
@@ -534,6 +537,15 @@
             if(sc.displayScale&&sc.baseSize&&sc.canvasBounds&&sc.canvasBounds.width>0){
                 sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
                 sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
+            }
+        }
+        /* ファイルピッカー中はPhaserのScaleManagerが
+           window.resizeに直接反応してdisplayScaleを壊すのを防ぐ。
+           保存値で毎フレーム上書きする */
+        if(_filePicking && _savedDS && zm<=1.0001){
+            if(sc.displayScale){
+                sc.displayScale.x=_savedDS.x;
+                sc.displayScale.y=_savedDS.y;
             }
         }
         _prevZm=zm;
@@ -796,11 +808,20 @@
                             : node.querySelector && node.querySelector('input[type=file]');
                         if(inp){
                             _filePicking = true;
+                            /* displayScaleの現在値を保存
+                               （Phaser ScaleManagerの内部resizeで壊されても_loopで復元する） */
+                            if(window._phaserGame && window._phaserGame.scale && window._phaserGame.scale.displayScale){
+                                _savedDS = {
+                                    x: window._phaserGame.scale.displayScale.x,
+                                    y: window._phaserGame.scale.displayScale.y
+                                };
+                            }
                             /* changeイベント（ファイル選択完了）で解除 */
                             inp.addEventListener('change', function(){
                                 if(_filePickingTimer) clearTimeout(_filePickingTimer);
                                 _filePickingTimer = setTimeout(function(){
                                     _filePicking = false;
+                                    _savedDS = null;
                                     /* ファイルピッカー中にresizeが抑制されていたため、
                                        PhaserのresizeIntervalを一時解放してdisplayScaleを含む
                                        全てのscale状態を強制リフレッシュする */
@@ -815,6 +836,7 @@
                             if(_filePickingTimer) clearTimeout(_filePickingTimer);
                             _filePickingTimer = setTimeout(function(){
                                 _filePicking = false;
+                                _savedDS = null;
                                 _resizeUnlockFrames = 10;
                                 if(window._phaserGame && window._phaserGame.scale){
                                     window._phaserGame.scale.resizeInterval = 0;
