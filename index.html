@@ -476,6 +476,7 @@
     var MIN_ZM=1.0, MAX_ZM=2.0;
     var zm=1.0, txPx=0, tyPx=0;
     var cv=null, r0={left:0,top:0}, w0=0, h0=0, ready=false;
+    var _prevZm=1.0;
 
     /* canvasを検出してセットアップ */
     var _t=setInterval(function(){
@@ -493,14 +494,23 @@
         if(!cv||!window._phaserGame||!ready) return;
         var sc=window._phaserGame.scale;
         if(!sc) return;
-        sc.resizeInterval=999999999; /* 自動リフレッシュを抑制 */
-        /* ズーム中はPhaserが内部でdisplayScaleをリセットするため毎フレーム維持 */
+        sc.resizeInterval=999999999;
         if(zm>1.0001){
             if(sc.updateBounds) sc.updateBounds();
             if(sc.displayScale&&sc.baseSize&&sc.canvasBounds&&sc.canvasBounds.width>0){
                 sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
                 sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
             }
+            _prevZm=zm;
+        } else {
+            if(sc.updateBounds) sc.updateBounds();
+            if(_prevZm>1.0001){
+                if(sc.displayScale&&sc.baseSize&&sc.canvasBounds&&sc.canvasBounds.width>0){
+                    sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
+                    sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
+                }
+            }
+            _prevZm=zm;
         }
         _syncInput();
     }
