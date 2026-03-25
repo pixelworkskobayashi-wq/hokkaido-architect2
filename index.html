@@ -646,6 +646,9 @@
             _clamp(); _apply();
         }, true);
 
+        /* ファイルピッカー操作中フラグ（iOS visibilitychange誤作動防止） */
+        var _filePicking=false;
+
         /* 2本指ドラッグ + ピンチズーム */
         var tc={ids:[],mx:0,my:0,d:0,on:false};
         function _two(ts){
@@ -724,6 +727,8 @@
            iPadOSのアプリスイッチャーで縮小→復帰した際の縮小表示を修正 */
         function _resetOnForeground(){
             if(!cv||!ready) return;
+            /* ファイルピッカー操作中はr0の再計算を抑制 */
+            if(_filePicking){ _filePicking=false; return; }
             zm=1.0; txPx=0; tyPx=0;
             cv.style.transform='';
             cv.style.transformOrigin='';
@@ -731,13 +736,21 @@
             setTimeout(function(){
                 _saveR0();
                 _apply();
-                /* PhaserのScaleManagerにリサイズを通知 */
                 if(window._phaserGame && window._phaserGame.scale){
                     window._phaserGame.scale.refresh();
                 }
             }, 300);
         }
         document.addEventListener('visibilitychange', function(){
+            if(document.visibilityState==='hidden'){
+                /* hiddenになった原因がファイルピッカーか判定 */
+                /* input[type=file]がfocusを持っている場合はファイルピッカー */
+                var fi=document.querySelector('input[type=file]');
+                if(fi && document.activeElement===fi) _filePicking=true;
+                /* Phaserが生成するfile inputも対象 */
+                var pfi=document.querySelector('#game_app input[type=file]');
+                if(pfi) _filePicking=true;
+            }
             if(document.visibilityState==='visible') _resetOnForeground();
         });
         window.addEventListener('pageshow', function(e){
