@@ -511,6 +511,46 @@
         _attachEvents();
         requestAnimationFrame(_loop);
 
+        /* PhaserのゲームループのprestepでresizeInterval制御と
+           displayScale/canvasBoundsの維持を行う。
+           _loop()（requestAnimationFrame）ではタイミングが遅く、
+           ScaleManager.step()の後、InputManager.update()の後に実行されるため、
+           displayScaleが壊れた状態でpointer座標が計算されてしまう。
+           prestepはScaleManager.step()の前に実行されるので確実。 */
+        (function _waitGame(){
+            if(!window._phaserGame){
+                setTimeout(_waitGame, 100);
+                return;
+            }
+            window._phaserGame.events.on('prestep', function(){
+                if(!cv||!ready) return;
+                var sc=window._phaserGame.scale;
+                if(!sc) return;
+                /* resizeInterval制御: scene.restart()でリセットされても
+                   毎フレームprestepで再設定される */
+                if(_isRestoring){
+                    /* 復帰中はresizeIntervalを制限しない */
+                } else if(_resizeUnlockFrames>0){
+                    _resizeUnlockFrames--;
+                } else {
+                    sc.resizeInterval=999999999;
+                }
+                /* 等倍時のdisplayScale/canvasBoundsをw0/h0/r0から維持 */
+                if(zm<=1.0001 && !_isRestoring && _resizeUnlockFrames<=0){
+                    if(sc.displayScale&&sc.baseSize&&w0>0&&h0>0){
+                        sc.displayScale.x=sc.baseSize.width /w0;
+                        sc.displayScale.y=sc.baseSize.height/h0;
+                    }
+                    if(sc.canvasBounds&&w0>0){
+                        sc.canvasBounds.left=r0.left;
+                        sc.canvasBounds.top=r0.top;
+                        sc.canvasBounds.width=w0;
+                        sc.canvasBounds.height=h0;
+                    }
+                }
+            });
+        })();
+
         /* デバッグ: pointerdown時の実際の座標をキャプチャ（リリース前に削除） */
         var _dbgTouch={x:0,y:0,ptrX:0,ptrY:0,dsX:0,dsY:0,cbL:0,cbT:0,cbW:0,dists:[],apX:0,apY:0};
         c.addEventListener('pointerdown', function(e){
@@ -560,36 +600,13 @@
         if(!cv||!window._phaserGame||!ready) return;
         var sc=window._phaserGame.scale;
         if(!sc) return;
-        /* 復帰ポーリング中 または resizeUnlock中はPhaserのリサイズを許可 */
-        if(_isRestoring){
-            /* 復帰中はresizeIntervalを制限しない */
-        } else if(_resizeUnlockFrames>0){
-            _resizeUnlockFrames--;
-        } else {
-            sc.resizeInterval=999999999;
-        }
         if(zm>1.0001){
-            /* ズーム中: updateBoundsでCSS transform後のサイズを取得し、displayScaleを計算 */
+            /* ズーム中: updateBoundsでCSS transform後のサイズを取得し、displayScaleを計算
+               （ズーム時はprestepではなく_loopでupdateBoundsを呼ぶ） */
             if(sc.updateBounds) sc.updateBounds();
             if(sc.displayScale&&sc.baseSize&&sc.canvasBounds&&sc.canvasBounds.width>0){
                 sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
                 sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
-            }
-        } else if(!_isRestoring && _resizeUnlockFrames===0){
-            /* 等倍時かつ復帰処理中でない: w0/h0からdisplayScaleを毎フレーム計算して維持
-               Phaserの自動リサイズはresizeInterval=999999999で停止しているため、
-               手動でdisplayScaleを維持しないと壊れたままになる。
-               _isRestoring中またはresizeUnlock中はPhaserに委ねる（その間にw0/h0が更新される）。
-               updateBounds()は呼ばない（等倍時はgetBoundingClientRect不要、w0/h0で十分） */
-            if(sc.displayScale&&sc.baseSize&&w0>0&&h0>0){
-                sc.displayScale.x=sc.baseSize.width /w0;
-                sc.displayScale.y=sc.baseSize.height/h0;
-            }
-            if(sc.canvasBounds&&w0>0){
-                sc.canvasBounds.left=r0.left;
-                sc.canvasBounds.top=r0.top;
-                sc.canvasBounds.width=w0;
-                sc.canvasBounds.height=h0;
             }
         }
 
