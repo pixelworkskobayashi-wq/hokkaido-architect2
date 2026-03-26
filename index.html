@@ -246,8 +246,7 @@
     </div>
 
     <div id="game_app"></div>
-    <!-- デバッグ表示（リリース前に削除） -->
-    <div id="_dbg" style="position:fixed;top:0;left:0;z-index:999999;background:rgba(0,0,0,0.85);color:#0f0;font:10px monospace;padding:4px 6px;pointer-events:none;white-space:pre;max-height:60vh;overflow:hidden;line-height:1.3;"></div>
+
 
     <!-- QRコードオーバーレイ -->
     <div id="qr-overlay">
@@ -494,10 +493,6 @@
     /* ファイルピッカー操作中フラグ（IIFE直下に配置してresizeハンドラ・_checkVisualViewportからもアクセス可能にする） */
     var _filePicking=false;
     var _filePickingTimer=null;
-    /* ファイルピッカー中にPhaserのScaleManagerがdisplayScaleを壊すのを防ぐ
-       _filePicking=true時に保存し、_loop内で毎フレーム上書きして固定する */
-    var _savedScale=null;
-
     /* canvasを検出してセットアップ */
     var _t=setInterval(function(){
         var c=document.querySelector('#game_app canvas');
@@ -552,9 +547,6 @@
                 if(!cv||!ready) return;
                 var sc=window._phaserGame.scale;
                 if(!sc) return;
-                _D.prestepCount++;
-                _D.prestepRI=sc.resizeInterval||0;
-                if(sc.displayScale) _D.prestepDsX=sc.displayScale.x;
                 /* resizeInterval制御: scene.restart()でリセットされても
                    毎フレームprestepで再設定される */
                 if(_isRestoring){
@@ -580,120 +572,6 @@
             });
         })();
 
-        /* ===== 包括デバッグ ===== */
-        var _D={
-            /* DOMレベル(capture phase) */
-            dom:{clientX:0,clientY:0,type:'',calcX:0,calcY:0,dsX:0,dsY:0,cbL:0,cbT:0,cbW:0,cbH:0,
-                 rectL:0,rectT:0,rectW:0,rectH:0},
-            /* Phaserシーンレベル(bubble後) */
-            scene:{ptrX:0,ptrY:0,posX:0,posY:0,worldX:0,worldY:0,dsX:0,dsY:0,cbL:0,cbT:0,cbW:0,
-                   dists:[],distsFromPos:[]},
-            /* prestepカウンター */
-            prestepCount:0,
-            prestepDsX:0,prestepRI:0,
-            /* Phaserの内部サイズ情報 */
-            sizes:{parentW:0,parentH:0,displayW:0,displayH:0,gameW:0,gameH:0,baseW:0,baseH:0},
-            /* 状態フラグ */
-            loadedJSON:false,
-            lastEvent:'none'
-        };
-        window._D=_D;
-
-        /* DOM pointerdown (capture phase - Phaserの前に発火) */
-        c.addEventListener('pointerdown', function(e){
-            var sc=window._phaserGame?window._phaserGame.scale:null;
-            _D.dom.clientX=Math.round(e.clientX);
-            _D.dom.clientY=Math.round(e.clientY);
-            _D.dom.type=e.pointerType||'?';
-            if(sc){
-                if(sc.displayScale){
-                    _D.dom.dsX=sc.displayScale.x;
-                    _D.dom.dsY=sc.displayScale.y;
-                }
-                if(sc.canvasBounds){
-                    _D.dom.cbL=Math.round(sc.canvasBounds.left);
-                    _D.dom.cbT=Math.round(sc.canvasBounds.top);
-                    _D.dom.cbW=Math.round(sc.canvasBounds.width);
-                    _D.dom.cbH=Math.round(sc.canvasBounds.height);
-                }
-                _D.dom.calcX=Math.round((e.clientX-sc.canvasBounds.left)*sc.displayScale.x);
-                _D.dom.calcY=Math.round((e.clientY-sc.canvasBounds.top)*sc.displayScale.y);
-            }
-            /* canvasの実際のgetBoundingClientRect */
-            var rect=cv.getBoundingClientRect();
-            _D.dom.rectL=Math.round(rect.left);
-            _D.dom.rectT=Math.round(rect.top);
-            _D.dom.rectW=Math.round(rect.width);
-            _D.dom.rectH=Math.round(rect.height);
-            _D.lastEvent='dom-capture';
-        }, true);
-
-        /* Phaserのシーン入力イベントをフック（実際のpointer.x/yを取得） */
-        (function _hookScene(){
-            if(!window._phaserGame){ setTimeout(_hookScene,200); return; }
-            /* MainSceneのpointerdownを監視 */
-            var _checkScene=setInterval(function(){
-                var main=window._phaserGame.scene.getScene('MainScene');
-                if(!main||!main.sys.settings.active) return;
-                if(main._dbgHooked) return;
-                main._dbgHooked=true;
-                main.input.on('pointerdown', function(pointer){
-                    var sc=window._phaserGame.scale;
-                    _D.scene.ptrX=Math.round(pointer.x);
-                    _D.scene.ptrY=Math.round(pointer.y);
-                    _D.scene.posX=Math.round(pointer.position.x);
-                    _D.scene.posY=Math.round(pointer.position.y);
-                    _D.scene.worldX=Math.round(pointer.worldX);
-                    _D.scene.worldY=Math.round(pointer.worldY);
-                    if(sc.displayScale){
-                        _D.scene.dsX=sc.displayScale.x;
-                        _D.scene.dsY=sc.displayScale.y;
-                    }
-                    if(sc.canvasBounds){
-                        _D.scene.cbL=Math.round(sc.canvasBounds.left);
-                        _D.scene.cbT=Math.round(sc.canvasBounds.top);
-                        _D.scene.cbW=Math.round(sc.canvasBounds.width);
-                    }
-                    /* edit_partsがあれば辺距離をsceneのpointer座標で計算 */
-                    _D.scene.dists=[];
-                    _D.scene.distsFromPos=[];
-                    if(main.edit_parts && main.edit_parts!==main.non_edit){
-                        var ep=main.edit_parts;
-                        var edges=main.image_edge_point(ep);
-                        /* pointer.x/y で計算 */
-                        var tp1=new Phaser.Math.Vector2(pointer.x, pointer.y);
-                        for(var i=0;i<4;i++){
-                            _D.scene.dists.push(Math.round(Math.abs(
-                                main.point_to_line_distance(tp1,edges[i],edges[(i+1)%4]))));
-                        }
-                        /* pointer.position で計算 */
-                        var tp2=new Phaser.Math.Vector2(pointer.position.x, pointer.position.y);
-                        for(var i=0;i<4;i++){
-                            _D.scene.distsFromPos.push(Math.round(Math.abs(
-                                main.point_to_line_distance(tp2,edges[i],edges[(i+1)%4]))));
-                        }
-                    }
-                    /* Phaserの内部サイズ情報 */
-                    if(sc.parentSize) { _D.sizes.parentW=Math.round(sc.parentSize.width); _D.sizes.parentH=Math.round(sc.parentSize.height); }
-                    if(sc.displaySize){ _D.sizes.displayW=Math.round(sc.displaySize.width);_D.sizes.displayH=Math.round(sc.displaySize.height);}
-                    if(sc.gameSize)   { _D.sizes.gameW=Math.round(sc.gameSize.width);      _D.sizes.gameH=Math.round(sc.gameSize.height); }
-                    if(sc.baseSize)   { _D.sizes.baseW=Math.round(sc.baseSize.width);      _D.sizes.baseH=Math.round(sc.baseSize.height); }
-                    _D.lastEvent='scene-ptrdown';
-                });
-                /* scene.restart()でフックが外れるので再登録 */
-                main.events.on('shutdown', function(){ main._dbgHooked=false; });
-            },500);
-        })();
-
-        /* JSON読み込み検知 */
-        (function _watchJSON(){
-            if(!window._phaserGame){ setTimeout(_watchJSON,200); return; }
-            var origAdd=window._phaserGame.cache.json.add.bind(window._phaserGame.cache.json);
-            window._phaserGame.cache.json.add=function(key,data){
-                if(key==='load_json_data') _D.loadedJSON=true;
-                return origAdd(key,data);
-            };
-        })();
     }, 100);
 
     /* 毎フレーム: ScaleManager抑制・テキスト非表示管理 */
@@ -713,43 +591,7 @@
             }
         }
 
-        /* 包括デバッグ表示（リリース前に削除） */
-        var _dd=document.getElementById('_dbg');
-        if(_dd&&sc.displayScale){
-            var D=window._D||{dom:{clientX:0,clientY:0,type:'',calcX:0,calcY:0,dsX:0,dsY:0,cbL:0,cbT:0,cbW:0,cbH:0,rectL:0,rectT:0,rectW:0,rectH:0},scene:{ptrX:0,ptrY:0,posX:0,posY:0,worldX:0,worldY:0,dsX:0,dsY:0,cbL:0,cbT:0,cbW:0,dists:[],distsFromPos:[]},prestepCount:0,prestepDsX:0,prestepRI:0,sizes:{parentW:0,parentH:0,displayW:0,displayH:0,gameW:0,gameH:0,baseW:0,baseH:0},loadedJSON:false,lastEvent:'none'};
-            var cdsX=sc.baseSize?sc.baseSize.width/Math.max(w0,1):0;
-            _dd.textContent=
-                '=== FRAME STATE ===\n'+
-                'dsX='+sc.displayScale.x.toFixed(4)+' correct='+cdsX.toFixed(4)+'\n'+
-                'cb=('+Math.round(sc.canvasBounds.left)+','+Math.round(sc.canvasBounds.top)+' '+Math.round(sc.canvasBounds.width)+'x'+Math.round(sc.canvasBounds.height)+')\n'+
-                'r0=('+Math.round(r0.left)+','+Math.round(r0.top)+') w0='+Math.round(w0)+' h0='+Math.round(h0)+'\n'+
-                'zm='+zm.toFixed(2)+' fp='+(_filePicking?'T':'F')+' json='+(D.loadedJSON?'Y':'N')+'\n'+
-                'prestep#='+D.prestepCount+' RI_pre='+D.prestepRI+' dsX_pre='+(typeof D.prestepDsX==='number'?D.prestepDsX.toFixed(4):'?')+'\n'+
-                'sizes: base='+D.sizes.baseW+'x'+D.sizes.baseH+' game='+D.sizes.gameW+'x'+D.sizes.gameH+'\n'+
-                '  display='+D.sizes.displayW+'x'+D.sizes.displayH+' parent='+D.sizes.parentW+'x'+D.sizes.parentH+'\n'+
-                '=== DOM CAPTURE (before Phaser) ===\n'+
-                'client=('+D.dom.clientX+','+D.dom.clientY+') type='+D.dom.type+'\n'+
-                'calc_ptr=('+D.dom.calcX+','+D.dom.calcY+')\n'+
-                'ds@dom=('+D.dom.dsX.toFixed(4)+','+D.dom.dsY.toFixed(4)+')\n'+
-                'cb@dom=('+D.dom.cbL+','+D.dom.cbT+' '+D.dom.cbW+'x'+D.dom.cbH+')\n'+
-                'rect@dom=('+D.dom.rectL+','+D.dom.rectT+' '+D.dom.rectW+'x'+D.dom.rectH+')\n'+
-                '=== SCENE PTRDOWN (what bundle uses) ===\n'+
-                'ptr.xy=('+D.scene.ptrX+','+D.scene.ptrY+')\n'+
-                'ptr.pos=('+D.scene.posX+','+D.scene.posY+')\n'+
-                'ptr.world=('+D.scene.worldX+','+D.scene.worldY+')\n'+
-                'ds@scene=('+D.scene.dsX.toFixed(4)+','+D.scene.dsY.toFixed(4)+')\n'+
-                'cb@scene=('+D.scene.cbL+','+D.scene.cbT+' w='+D.scene.cbW+')\n'+
-                'edge_xy=['+D.scene.dists.join(',')+'] (need<33)\n'+
-                'edge_pos=['+D.scene.distsFromPos.join(',')+'] (need<33)\n'+
-                'last='+D.lastEvent+'\n'+
-                '=== POINTER REF ===\n'+
-                (function(){
-                    var main=window._phaserGame?window._phaserGame.scene.getScene('MainScene'):null;
-                    if(!main||!main.pointer) return 'no scene.pointer';
-                    return 'ptr.id='+main.pointer.id+' type='+main.pointer.pointerType+
-                        ' pos=('+Math.round(main.pointer.position.x)+','+Math.round(main.pointer.position.y)+')';
-                })();
-        }
+
         _prevZm=zm;
         _syncInput();
         _checkVisualViewport();
@@ -1010,27 +852,11 @@
                             : node.querySelector && node.querySelector('input[type=file]');
                         if(inp){
                             _filePicking = true;
-                            /* displayScaleとcanvasBoundsの現在値を保存
-                               （Phaser ScaleManagerの内部resizeで壊されても_loopで復元する） */
-                            if(window._phaserGame && window._phaserGame.scale){
-                                var _sc = window._phaserGame.scale;
-                                if(_sc.displayScale && _sc.canvasBounds){
-                                    _savedScale = {
-                                        dsX: _sc.displayScale.x,
-                                        dsY: _sc.displayScale.y,
-                                        cbLeft: _sc.canvasBounds.left,
-                                        cbTop: _sc.canvasBounds.top,
-                                        cbWidth: _sc.canvasBounds.width,
-                                        cbHeight: _sc.canvasBounds.height
-                                    };
-                                }
-                            }
                             /* changeイベント（ファイル選択完了）で解除 */
                             inp.addEventListener('change', function(){
                                 if(_filePickingTimer) clearTimeout(_filePickingTimer);
                                 _filePickingTimer = setTimeout(function(){
                                     _filePicking = false;
-                                    _savedScale = null;
                                     /* ファイルピッカー中にresizeが抑制されていたため、
                                        PhaserのresizeIntervalを一時解放してdisplayScaleを含む
                                        全てのscale状態を強制リフレッシュする */
@@ -1045,7 +871,6 @@
                             if(_filePickingTimer) clearTimeout(_filePickingTimer);
                             _filePickingTimer = setTimeout(function(){
                                 _filePicking = false;
-                                _savedScale = null;
                                 _resizeUnlockFrames = 10;
                                 if(window._phaserGame && window._phaserGame.scale){
                                     window._phaserGame.scale.resizeInterval = 0;
