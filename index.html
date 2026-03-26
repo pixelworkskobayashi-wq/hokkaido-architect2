@@ -247,7 +247,7 @@
 
     <div id="game_app"></div>
     <!-- デバッグ表示（リリース前に削除） -->
-    <div id="_dbg" style="position:fixed;top:0;left:0;z-index:999999;background:rgba(0,0,0,0.7);color:#0f0;font:11px monospace;padding:4px 8px;pointer-events:none;white-space:pre;"></div>
+    <div id="_dbg" style="position:fixed;top:0;left:0;z-index:999999;background:rgba(0,0,0,0.85);color:#0f0;font:11px monospace;padding:4px 8px;pointer-events:none;white-space:pre;max-height:50vh;overflow:hidden;"></div>
 
     <!-- QRコードオーバーレイ -->
     <div id="qr-overlay">
@@ -510,6 +510,47 @@
         }, 800);
         _attachEvents();
         requestAnimationFrame(_loop);
+
+        /* デバッグ: pointerdown時の実際の座標をキャプチャ（リリース前に削除） */
+        var _dbgTouch={x:0,y:0,ptrX:0,ptrY:0,dsX:0,dsY:0,cbL:0,cbT:0,cbW:0,dists:[],apX:0,apY:0};
+        c.addEventListener('pointerdown', function(e){
+            _dbgTouch.x=e.clientX;
+            _dbgTouch.y=e.clientY;
+            if(window._phaserGame){
+                var sc=window._phaserGame.scale;
+                if(sc.displayScale){
+                    _dbgTouch.dsX=sc.displayScale.x;
+                    _dbgTouch.dsY=sc.displayScale.y;
+                }
+                if(sc.canvasBounds){
+                    _dbgTouch.cbL=sc.canvasBounds.left;
+                    _dbgTouch.cbT=sc.canvasBounds.top;
+                    _dbgTouch.cbW=sc.canvasBounds.width;
+                }
+                /* pointer座標を手計算（Phaserと同じ計算式） */
+                _dbgTouch.ptrX=Math.round((e.clientX - sc.canvasBounds.left) * sc.displayScale.x);
+                _dbgTouch.ptrY=Math.round((e.clientY - sc.canvasBounds.top) * sc.displayScale.y);
+
+                /* MainScene上のedit_partsとの辺距離を計算 */
+                _dbgTouch.dists=[];
+                var main=window._phaserGame.scene.getScene('MainScene');
+                if(main && main.edit_parts && main.edit_parts!==main.non_edit){
+                    var ep=main.edit_parts;
+                    var edges=main.image_edge_point(ep);
+                    var testPt=new Phaser.Math.Vector2(_dbgTouch.ptrX, _dbgTouch.ptrY);
+                    for(var i=0;i<4;i++){
+                        var d=Math.abs(main.point_to_line_distance(testPt, edges[i], edges[(i+1)%4]));
+                        _dbgTouch.dists.push(Math.round(d));
+                    }
+                }
+                /* PhaserのactivePointerの値も取得（1フレーム遅れの可能性確認用） */
+                if(main && main.input && main.input.activePointer){
+                    _dbgTouch.apX=Math.round(main.input.activePointer.x);
+                    _dbgTouch.apY=Math.round(main.input.activePointer.y);
+                }
+            }
+        }, true);
+        window._dbgTouch=_dbgTouch; /* コンソールからも確認できるように */
     }, 100);
 
     /* 毎フレーム: ScaleManager抑制・テキスト非表示管理 */
@@ -564,7 +605,14 @@
                     'cb.l='+Math.round(sc.canvasBounds.left)+' cb.t='+Math.round(sc.canvasBounds.top)+'\n'+
                     'cb.w='+Math.round(sc.canvasBounds.width)+' cb.h='+Math.round(sc.canvasBounds.height)+'\n'+
                     'r0.l='+Math.round(r0.left)+' r0.t='+Math.round(r0.top)+' w0='+Math.round(w0)+' h0='+Math.round(h0)+'\n'+
-                    'zm='+zm.toFixed(2)+' fp='+(_filePicking?'T':'F')+' rest='+(_isRestoring?'T':'F');
+                    'zm='+zm.toFixed(2)+' fp='+(_filePicking?'T':'F')+' rest='+(_isRestoring?'T':'F')+'\n'+
+                    '--- last touch ---\n'+
+                    'client=('+Math.round((window._dbgTouch||{x:0}).x)+','+Math.round((window._dbgTouch||{y:0}).y)+')\n'+
+                    'calc_ptr=('+(window._dbgTouch?window._dbgTouch.ptrX:'?')+','+(window._dbgTouch?window._dbgTouch.ptrY:'?')+')\n'+
+                    'phaser_ptr=('+(window._dbgTouch?window._dbgTouch.apX:'?')+','+(window._dbgTouch?window._dbgTouch.apY:'?')+')\n'+
+                    'ds@touch=('+(window._dbgTouch&&window._dbgTouch.dsX?window._dbgTouch.dsX.toFixed(4):'?')+','+(window._dbgTouch&&window._dbgTouch.dsY?window._dbgTouch.dsY.toFixed(4):'?')+')\n'+
+                    'cb@touch=('+Math.round((window._dbgTouch||{cbL:0}).cbL)+','+Math.round((window._dbgTouch||{cbT:0}).cbT)+' w='+Math.round((window._dbgTouch||{cbW:0}).cbW)+')\n'+
+                    'edge_dists=['+(window._dbgTouch?(window._dbgTouch.dists.join(',')):'?')+'] (need<33)';
             }
         }
         _prevZm=zm;
