@@ -511,6 +511,32 @@
         _attachEvents();
         requestAnimationFrame(_loop);
 
+        /* MainSceneのpointerを毎タッチで更新する。
+           scene.restart()後のcreate()でthis.pointer=this.input.activePointerが
+           mousePointer(#0)を取得してしまい、指タッチ(pointer#1)と不一致になる問題を修正。
+           シーンレベルのpointerdownで実際のpointerオブジェクトに差し替える。 */
+        (function _patchPointer(){
+            if(!window._phaserGame){ setTimeout(_patchPointer,200); return; }
+            var _patchedScene=null;
+            setInterval(function(){
+                var game=window._phaserGame;
+                if(!game||!game.scene) return;
+                var main=game.scene.getScene('MainScene');
+                if(!main||!main.sys||!main.sys.settings.active) {
+                    _patchedScene=null;
+                    return;
+                }
+                if(_patchedScene===main) return;
+                _patchedScene=main;
+                main.input.on('pointerdown', function(pointer){
+                    main.pointer=pointer;
+                });
+                main.input.on('pointermove', function(pointer){
+                    if(pointer.isDown) main.pointer=pointer;
+                });
+            }, 500);
+        })();
+
         /* PhaserのゲームループのprestepでresizeInterval制御と
            displayScale/canvasBoundsの維持を行う。
            _loop()（requestAnimationFrame）ではタイミングが遅く、
@@ -715,7 +741,14 @@
                 'cb@scene=('+D.scene.cbL+','+D.scene.cbT+' w='+D.scene.cbW+')\n'+
                 'edge_xy=['+D.scene.dists.join(',')+'] (need<33)\n'+
                 'edge_pos=['+D.scene.distsFromPos.join(',')+'] (need<33)\n'+
-                'last='+D.lastEvent;
+                'last='+D.lastEvent+'\n'+
+                '=== POINTER REF ===\n'+
+                (function(){
+                    var main=window._phaserGame?window._phaserGame.scene.getScene('MainScene'):null;
+                    if(!main||!main.pointer) return 'no scene.pointer';
+                    return 'ptr.id='+main.pointer.id+' type='+main.pointer.pointerType+
+                        ' pos=('+Math.round(main.pointer.position.x)+','+Math.round(main.pointer.position.y)+')';
+                })();
         }
         _prevZm=zm;
         _syncInput();
