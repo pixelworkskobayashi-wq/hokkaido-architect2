@@ -246,6 +246,8 @@
     </div>
 
     <div id="game_app"></div>
+    <!-- デバッグ表示（リリース前に削除） -->
+    <div id="_dbg" style="position:fixed;top:0;left:0;z-index:999999;background:rgba(0,0,0,0.7);color:#0f0;font:11px monospace;padding:4px 8px;pointer-events:none;white-space:pre;"></div>
 
     <!-- QRコードオーバーレイ -->
     <div id="qr-overlay">
@@ -526,32 +528,43 @@
             sc.resizeInterval=999999999;
         }
         if(zm>1.0001){
-            /* ズーム中のみdisplayScaleを維持 */
+            /* ズーム中: updateBoundsでCSS transform後のサイズを取得し、displayScaleを計算 */
             if(sc.updateBounds) sc.updateBounds();
             if(sc.displayScale&&sc.baseSize&&sc.canvasBounds&&sc.canvasBounds.width>0){
                 sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
                 sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
             }
-        } else if(_prevZm>1.0001){
-            /* ズーム→等倍の瞬間のみ1回リセット */
-            if(sc.displayScale&&sc.baseSize&&sc.canvasBounds&&sc.canvasBounds.width>0){
-                sc.displayScale.x=sc.baseSize.width /sc.canvasBounds.width;
-                sc.displayScale.y=sc.baseSize.height/sc.canvasBounds.height;
+        } else if(!_isRestoring && _resizeUnlockFrames===0){
+            /* 等倍時かつ復帰処理中でない: w0/h0からdisplayScaleを毎フレーム計算して維持
+               Phaserの自動リサイズはresizeInterval=999999999で停止しているため、
+               手動でdisplayScaleを維持しないと壊れたままになる。
+               _isRestoring中またはresizeUnlock中はPhaserに委ねる（その間にw0/h0が更新される）。
+               updateBounds()は呼ばない（等倍時はgetBoundingClientRect不要、w0/h0で十分） */
+            if(sc.displayScale&&sc.baseSize&&w0>0&&h0>0){
+                sc.displayScale.x=sc.baseSize.width /w0;
+                sc.displayScale.y=sc.baseSize.height/h0;
+            }
+            if(sc.canvasBounds&&w0>0){
+                sc.canvasBounds.left=r0.left;
+                sc.canvasBounds.top=r0.top;
+                sc.canvasBounds.width=w0;
+                sc.canvasBounds.height=h0;
             }
         }
-        /* ファイルピッカー中はPhaserのScaleManagerが
-           window.resizeに直接反応してdisplayScaleとcanvasBoundsを壊すのを防ぐ。
-           保存値で毎フレーム上書きする */
-        if(_filePicking && _savedScale && zm<=1.0001){
-            if(sc.displayScale){
-                sc.displayScale.x=_savedScale.dsX;
-                sc.displayScale.y=_savedScale.dsY;
-            }
-            if(sc.canvasBounds){
-                sc.canvasBounds.left=_savedScale.cbLeft;
-                sc.canvasBounds.top=_savedScale.cbTop;
-                sc.canvasBounds.width=_savedScale.cbWidth;
-                sc.canvasBounds.height=_savedScale.cbHeight;
+
+        /* デバッグ表示（リリース前に削除） */
+        if(sc.displayScale&&sc.canvasBounds){
+            var _dd=document.getElementById('_dbg');
+            if(_dd){
+                var _correctDsX=sc.baseSize?sc.baseSize.width/Math.max(w0,1):0;
+                var _correctDsY=sc.baseSize?sc.baseSize.height/Math.max(h0,1):0;
+                _dd.textContent=
+                    'dsX='+sc.displayScale.x.toFixed(4)+' (correct='+_correctDsX.toFixed(4)+')\n'+
+                    'dsY='+sc.displayScale.y.toFixed(4)+' (correct='+_correctDsY.toFixed(4)+')\n'+
+                    'cb.l='+Math.round(sc.canvasBounds.left)+' cb.t='+Math.round(sc.canvasBounds.top)+'\n'+
+                    'cb.w='+Math.round(sc.canvasBounds.width)+' cb.h='+Math.round(sc.canvasBounds.height)+'\n'+
+                    'r0.l='+Math.round(r0.left)+' r0.t='+Math.round(r0.top)+' w0='+Math.round(w0)+' h0='+Math.round(h0)+'\n'+
+                    'zm='+zm.toFixed(2)+' fp='+(_filePicking?'T':'F')+' rest='+(_isRestoring?'T':'F');
             }
         }
         _prevZm=zm;
